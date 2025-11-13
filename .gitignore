@@ -1,0 +1,33 @@
+# Gradle / Kotlin
+.gradle/
+.kotlin/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+*.class
+hs_err_pid*
+replay_pid*
+
+# Node
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.eslintcache
+npm-debug.log*
+vite.config.ts.timestamp-*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+
+# IDEs and OS files
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db
