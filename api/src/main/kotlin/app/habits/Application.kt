@@ -1,8 +1,10 @@
 package app.habits
 
 import app.habits.config.AppConfig
+import app.habits.db.DatabaseFactory
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationStopped
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
@@ -17,6 +19,10 @@ fun main() {
 }
 
 fun Application.module(config: AppConfig) {
+    val dataSource = DatabaseFactory.dataSource(config.database)
+    DatabaseFactory.migrate(dataSource)
+    val db = DatabaseFactory.connect(dataSource)
+    monitor.subscribe(ApplicationStopped) { dataSource.close() }
     install(ContentNegotiation) { json() }
 
     routing {
