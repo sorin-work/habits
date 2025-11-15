@@ -1,5 +1,6 @@
 package app.habits
 
+import app.habits.config.AppConfig
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -11,10 +12,11 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
 fun main() {
-    embeddedServer(Netty, port = 8080, host = "0.0.0.0") { module() }.start(wait = true)
+    val config = AppConfig.fromEnv()
+    embeddedServer(Netty, port = config.port, host = "0.0.0.0") { module(config) }.start(wait = true)
 }
 
-fun Application.module() {
+fun Application.module(config: AppConfig) {
     install(ContentNegotiation) { json() }
 
     routing {
