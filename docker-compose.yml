@@ -1,0 +1,21 @@
+name: habits
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-habits}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-habits}
+      POSTGRES_DB: ${POSTGRES_DB:-habits}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - '${DB_PORT:-5443}:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  db-data:
