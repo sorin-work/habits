@@ -1,5 +1,7 @@
 package app.habits
 
+import app.habits.common.AppJson
+import app.habits.common.configureErrorHandling
 import app.habits.config.AppConfig
 import app.habits.db.DatabaseFactory
 import io.ktor.serialization.kotlinx.json.json
@@ -23,7 +25,9 @@ fun Application.module(config: AppConfig) {
     DatabaseFactory.migrate(dataSource)
     val db = DatabaseFactory.connect(dataSource)
     monitor.subscribe(ApplicationStopped) { dataSource.close() }
-    install(ContentNegotiation) { json() }
+
+    install(ContentNegotiation) { json(AppJson) }
+    configureErrorHandling()
 
     routing {
         get("/health") {
