@@ -4,6 +4,7 @@ import app.habits.common.AppJson
 import app.habits.common.configureErrorHandling
 import app.habits.config.AppConfig
 import app.habits.db.DatabaseFactory
+import app.habits.health.healthRoutes
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStopped
@@ -11,8 +12,6 @@ import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 
 fun main() {
@@ -30,8 +29,6 @@ fun Application.module(config: AppConfig) {
     configureErrorHandling()
 
     routing {
-        get("/health") {
-            call.respond(mapOf("status" to "ok"))
-        }
+        healthRoutes(db)
     }
 }
