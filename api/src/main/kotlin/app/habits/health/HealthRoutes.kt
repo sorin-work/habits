@@ -1,5 +1,6 @@
 package app.habits.health
 
+import io.ktor.http.HttpStatusCode
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
@@ -16,7 +17,14 @@ data class HealthResponse(
 
 fun Route.healthRoutes(db: Database) {
     get("/health") {
-        newSuspendedTransaction(Dispatchers.IO, db) { exec("SELECT 1") { it.next() } }
-        call.respond(HealthResponse("ok", "up"))
+        val up =
+            runCatching {
+                newSuspendedTransaction(Dispatchers.IO, db) { exec("SELECT 1") { it.next() } }
+            }.getOrNull() == true
+        if (up) {
+            call.respond(HealthResponse("ok", "up"))
+        } else {
+            call.respond(HttpStatusCode.ServiceUnavailable, HealthResponse("unavailable", "down"))
+        }
     }
 }
