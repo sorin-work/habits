@@ -13,8 +13,11 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
+import java.util.TimeZone
 
 fun main() {
+    // Timestamps are stored without a zone; keep the JVM on UTC so they always mean UTC.
+    TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
     val config = AppConfig.fromEnv()
     embeddedServer(Netty, port = config.port, host = "0.0.0.0") { module(config) }.start(wait = true)
 }
