@@ -10,6 +10,7 @@ import java.time.Clock
 import java.time.ZoneId
 
 const val MIN_PASSWORD_LENGTH = 8
+const val MAX_PASSWORD_LENGTH = 72
 
 fun parseTimeZone(value: String): ZoneId? = runCatching { ZoneId.of(value.trim()) }.getOrNull()
 
@@ -25,6 +26,8 @@ class UserService(
         validate {
             check("email", isEmail(email)) { "Enter a valid email address" }
             checkPassword("password", request.password)
+            check("name", name.isNotEmpty()) { "Enter your name" }
+            check("name", name.length <= 80) { "Name must be at most 80 characters" }
             check("timeZone", request.timeZone.isNullOrBlank() || zone != null) { "Unknown time zone" }
         }
         if (users.findByEmail(email) != null) {
@@ -48,5 +51,8 @@ private fun Validator.checkPassword(
 ) {
     check(field, password.length >= MIN_PASSWORD_LENGTH) {
         "Password must be at least $MIN_PASSWORD_LENGTH characters"
+    }
+    check(field, password.length <= MAX_PASSWORD_LENGTH) {
+        "Password must be at most $MAX_PASSWORD_LENGTH characters"
     }
 }
