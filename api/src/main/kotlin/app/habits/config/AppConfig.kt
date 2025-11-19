@@ -9,6 +9,7 @@ data class DatabaseConfig(
 data class AppConfig(
     val port: Int,
     val database: DatabaseConfig,
+    val bcryptCost: Int = 12,
 ) {
     companion object {
         fun fromEnv(env: Map<String, String> = System.getenv()): AppConfig {
