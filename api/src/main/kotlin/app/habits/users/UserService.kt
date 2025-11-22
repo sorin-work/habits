@@ -4,6 +4,7 @@ import app.habits.auth.JwtService
 import app.habits.auth.PasswordHasher
 import app.habits.common.ApiException
 import app.habits.common.ConflictException
+import app.habits.common.UnauthorizedException
 import app.habits.common.Validator
 import app.habits.common.isEmail
 import app.habits.common.normalizeEmail
@@ -60,6 +61,8 @@ class UserService(
         val issued = jwt.issue(user.id)
         return AuthResponse(issued.token, issued.expiresAt, user.toResponse())
     }
+
+    suspend fun get(userId: Long): User = users.findById(userId) ?: throw UnauthorizedException()
 
     private fun invalidCredentials() =
         ApiException(HttpStatusCode.Unauthorized, "invalid_credentials", "Email or password is incorrect")

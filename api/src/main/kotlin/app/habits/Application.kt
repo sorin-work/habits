@@ -11,6 +11,7 @@ import app.habits.health.healthRoutes
 import app.habits.users.UserRepository
 import app.habits.users.UserService
 import app.habits.users.authRoutes
+import app.habits.users.userRoutes
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStopped
@@ -50,5 +51,6 @@ fun Application.module(
     routing {
         healthRoutes(db)
         authRoutes(userService)
+        userRoutes(userService)
     }
 }
