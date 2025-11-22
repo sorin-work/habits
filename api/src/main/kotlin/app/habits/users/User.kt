@@ -39,3 +39,16 @@ data class RegisterRequest(
     val name: String = "",
     val timeZone: String? = null,
 )
+
+@Serializable
+data class LoginRequest(
+    val email: String = "",
+    val password: String = "",
+)
+
+@Serializable
+data class AuthResponse(
+    val token: String,
+    @Serializable(with = InstantSerializer::class) val expiresAt: Instant,
+    val user: UserResponse,
+)

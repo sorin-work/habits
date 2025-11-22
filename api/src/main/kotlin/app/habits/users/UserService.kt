@@ -1,11 +1,14 @@
 package app.habits.users
 
+import app.habits.auth.JwtService
 import app.habits.auth.PasswordHasher
+import app.habits.common.ApiException
 import app.habits.common.ConflictException
 import app.habits.common.Validator
 import app.habits.common.isEmail
 import app.habits.common.normalizeEmail
 import app.habits.common.validate
+import io.ktor.http.HttpStatusCode
 import java.time.Clock
 import java.time.ZoneId
 
@@ -17,9 +20,10 @@ fun parseTimeZone(value: String): ZoneId? = runCatching { ZoneId.of(value.trim()
 class UserService(
     private val users: UserRepository,
     private val hasher: PasswordHasher,
+    private val jwt: JwtService,
     private val clock: Clock,
 ) {
-    suspend fun register(request: RegisterRequest): User {
+    suspend fun register(request: RegisterRequest): AuthResponse {
         val email = normalizeEmail(request.email)
         val name = request.name.trim()
         val zone = request.timeZone?.let { parseTimeZone(it) }
@@ -41,8 +45,24 @@ class UserService(
                 timeZone = zone ?: ZoneId.of("UTC"),
                 createdAt = clock.instant(),
             )
-        return user
+        val issued = jwt.issue(user.id)
+        return AuthResponse(issued.token, issued.expiresAt, user.toResponse())
     }
+
+    suspend fun login(request: LoginRequest): AuthResponse {
+        val email = request.email.trim()
+        validate {
+            check("email", email.isNotEmpty()) { "Enter your email" }
+            check("password", request.password.isNotEmpty()) { "Enter your password" }
+        }
+        val user = users.findByEmail(email)
+        if (user == null || !hasher.verify(request.password, user.passwordHash)) throw invalidCredentials()
+        val issued = jwt.issue(user.id)
+        return AuthResponse(issued.token, issued.expiresAt, user.toResponse())
+    }
+
+    private fun invalidCredentials() =
+        ApiException(HttpStatusCode.Unauthorized, "invalid_credentials", "Email or password is incorrect")
 }
 
 private fun Validator.checkPassword(

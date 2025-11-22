@@ -1,6 +1,8 @@
 package app.habits
 
+import app.habits.auth.JwtService
 import app.habits.auth.PasswordHasher
+import app.habits.auth.configureSecurity
 import app.habits.common.AppJson
 import app.habits.common.configureErrorHandling
 import app.habits.config.AppConfig
@@ -37,11 +39,13 @@ fun Application.module(
     monitor.subscribe(ApplicationStopped) { dataSource.close() }
 
     val hasher = PasswordHasher(config.bcryptCost)
+    val jwt = JwtService(config.jwt, clock)
     val userRepository = UserRepository(db)
-    val userService = UserService(userRepository, hasher, clock)
+    val userService = UserService(userRepository, hasher, jwt, clock)
 
     install(ContentNegotiation) { json(AppJson) }
     configureErrorHandling()
+    configureSecurity(jwt)
 
     routing {
         healthRoutes(db)

@@ -22,3 +22,7 @@ class ConflictException(
     code: String,
     message: String,
 ) : ApiException(HttpStatusCode.Conflict, code, message)
+
+class UnauthorizedException(
+    message: String = "Authentication required",
+) : ApiException(HttpStatusCode.Unauthorized, "unauthorized", message)

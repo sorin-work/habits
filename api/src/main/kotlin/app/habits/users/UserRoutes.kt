@@ -10,8 +10,11 @@ import io.ktor.server.routing.route
 fun Route.authRoutes(service: UserService) {
     route("/api/auth") {
         post("/register") {
-            val response = service.register(call.receive<RegisterRequest>()).toResponse()
+            val response = service.register(call.receive<RegisterRequest>())
             call.respond(HttpStatusCode.Created, response)
+        }
+        post("/login") {
+            call.respond(service.login(call.receive<LoginRequest>()))
         }
     }
 }
