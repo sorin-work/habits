@@ -18,8 +18,10 @@ import io.ktor.server.application.ApplicationStopped
 import io.ktor.server.application.install
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.routing.routing
+import org.slf4j.event.Level
 import java.time.Clock
 import java.util.TimeZone
 
@@ -45,6 +47,9 @@ fun Application.module(
     val userService = UserService(userRepository, hasher, jwt, clock)
 
     install(ContentNegotiation) { json(AppJson) }
+    install(CallLogging) {
+        level = Level.INFO
+    }
     configureErrorHandling()
     configureSecurity(jwt)
 
