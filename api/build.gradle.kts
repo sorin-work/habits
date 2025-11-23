@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "2.2.10"
     kotlin("plugin.serialization") version "2.2.10"
+    id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     application
 }
 
@@ -59,4 +60,8 @@ tasks.test {
         events("failed")
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
     }
+}
+
+ktlint {
+    version.set("1.7.1")
 }
