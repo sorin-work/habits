@@ -16,7 +16,12 @@ import java.time.ZoneId
 const val MIN_PASSWORD_LENGTH = 8
 const val MAX_PASSWORD_LENGTH = 72
 
-fun parseTimeZone(value: String): ZoneId? = runCatching { ZoneId.of(value.trim()) }.getOrNull()
+/** Accepts IANA region ids such as "Europe/Berlin" and "UTC", but not raw offsets like "+02:00". */
+fun parseTimeZone(value: String): ZoneId? {
+    val trimmed = value.trim()
+    if (trimmed == "UTC") return ZoneId.of("UTC")
+    return if (trimmed in ZoneId.getAvailableZoneIds()) ZoneId.of(trimmed) else null
+}
 
 class UserService(
     private val users: UserRepository,
