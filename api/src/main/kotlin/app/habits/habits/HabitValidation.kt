@@ -7,6 +7,7 @@ import java.time.LocalDate
 
 const val DEFAULT_COLOR = "#4f7cff"
 const val MAX_TARGET = 100_000
+private val HEX_COLOR = Regex("^#[0-9a-fA-F]{6}$")
 
 /**
  * Checks a create/update request and turns it into a [HabitInput]. [today] is the user's local date and
@@ -17,11 +18,13 @@ fun HabitRequest.validated(today: LocalDate): HabitInput {
     val name = name.trim()
     val description = description?.trim()
     val unit = unit?.trim()?.ifEmpty { null }
+    val color = color?.trim()?.ifEmpty { null } ?: DEFAULT_COLOR
     var schedule: Schedule? = null
     validate {
         check("name", name.isNotEmpty()) { "Give the habit a name" }
         check("name", name.length <= 80) { "Name must be at most 80 characters" }
         check("description", (description?.length ?: 0) <= 500) { "Description must be at most 500 characters" }
+        check("color", HEX_COLOR.matches(color)) { "Color must be a hex value like #4f7cff" }
         schedule = parseSchedule(this@validated.schedule)
         check("target", target == null || target in 1..MAX_TARGET) { "Target must be between 1 and $MAX_TARGET" }
         check("unit", (unit?.length ?: 0) <= 20) { "Unit must be at most 20 characters" }
@@ -31,7 +34,7 @@ fun HabitRequest.validated(today: LocalDate): HabitInput {
     return HabitInput(
         name = name,
         description = description,
-        color = DEFAULT_COLOR,
+        color = color.lowercase(),
         schedule = schedule!!,
         target = target,
         unit = unit,

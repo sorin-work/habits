@@ -49,6 +49,7 @@ fun Habit.toResponse() =
 data class HabitRequest(
     val name: String = "",
     val description: String? = null,
+    val color: String? = null,
     val schedule: ScheduleDto? = null,
     val target: Int? = null,
     val unit: String? = null,
