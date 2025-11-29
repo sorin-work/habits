@@ -7,6 +7,9 @@ import app.habits.common.AppJson
 import app.habits.common.configureErrorHandling
 import app.habits.config.AppConfig
 import app.habits.db.DatabaseFactory
+import app.habits.habits.HabitRepository
+import app.habits.habits.HabitService
+import app.habits.habits.habitRoutes
 import app.habits.health.healthRoutes
 import app.habits.users.UserRepository
 import app.habits.users.UserService
@@ -44,7 +47,9 @@ fun Application.module(
     val hasher = PasswordHasher(config.bcryptCost)
     val jwt = JwtService(config.jwt, clock)
     val userRepository = UserRepository(db)
+    val habitRepository = HabitRepository(db)
     val userService = UserService(userRepository, hasher, jwt, clock)
+    val habitService = HabitService(habitRepository, clock)
 
     install(ContentNegotiation) { json(AppJson) }
     install(CallLogging) {
@@ -57,5 +62,6 @@ fun Application.module(
         healthRoutes(db)
         authRoutes(userService)
         userRoutes(userService)
+        habitRoutes(userService, habitService)
     }
 }

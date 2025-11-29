@@ -1,0 +1,86 @@
+package app.habits.habits
+
+import app.habits.db.Habits
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.statements.UpdateBuilder
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import java.time.Instant
+
+class HabitRepository(
+    private val db: Database,
+) {
+    suspend fun list(userId: Long): List<Habit> =
+        newSuspendedTransaction(Dispatchers.IO, db) {
+            Habits
+                .selectAll()
+                .where { Habits.userId eq userId }
+                .orderBy(Habits.id to SortOrder.ASC)
+                .map { it.toHabit() }
+        }
+
+    suspend fun find(
+        userId: Long,
+        id: Long,
+    ): Habit? =
+        newSuspendedTransaction(Dispatchers.IO, db) {
+            Habits
+                .selectAll()
+                .where { (Habits.id eq id) and (Habits.userId eq userId) }
+                .singleOrNull()
+                ?.toHabit()
+        }
+
+    suspend fun create(
+        userId: Long,
+        input: HabitInput,
+        now: Instant,
+    ): Habit =
+        newSuspendedTransaction(Dispatchers.IO, db) {
+            val id =
+                Habits.insert {
+                    it[Habits.userId] = userId
+                    it.write(input)
+                    it[createdAt] = now
+                    it[updatedAt] = now
+                } get Habits.id
+            Habits
+                .selectAll()
+                .where { Habits.id eq id }
+                .single()
+                .toHabit()
+        }
+}
+
+private fun UpdateBuilder<*>.write(input: HabitInput) {
+    val columns = input.schedule.toColumns()
+    this[Habits.name] = input.name
+    this[Habits.description] = input.description
+    this[Habits.color] = input.color
+    this[Habits.scheduleType] = columns.type
+    this[Habits.scheduleDays] = columns.days
+    this[Habits.timesPerWeek] = columns.timesPerWeek
+    this[Habits.target] = input.target
+    this[Habits.unit] = input.unit
+    this[Habits.startDate] = input.startDate
+}
+
+fun ResultRow.toHabit() =
+    Habit(
+        id = this[Habits.id],
+        userId = this[Habits.userId],
+        name = this[Habits.name],
+        description = this[Habits.description],
+        color = this[Habits.color],
+        schedule = scheduleFromColumns(this[Habits.scheduleType], this[Habits.scheduleDays], this[Habits.timesPerWeek]),
+        target = this[Habits.target],
+        unit = this[Habits.unit],
+        startDate = this[Habits.startDate],
+        createdAt = this[Habits.createdAt],
+    )
