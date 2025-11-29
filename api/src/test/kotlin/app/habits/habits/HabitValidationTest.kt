@@ -1,0 +1,58 @@
+package app.habits.habits
+
+import app.habits.common.ValidationException
+import java.time.DayOfWeek
+import java.time.LocalDate
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+
+class HabitValidationTest {
+    private val today = LocalDate.of(2026, 3, 18)
+
+    private fun errors(request: HabitRequest) = assertFailsWith<ValidationException> { request.validated(today) }.fields
+
+    @Test
+    fun `fills in defaults for a minimal habit`() {
+        val input = HabitRequest(name = "  Stretch ", schedule = ScheduleDto("daily")).validated(today)
+        assertEquals("Stretch", input.name)
+        assertEquals(DEFAULT_COLOR, input.color)
+        assertEquals(today, input.startDate)
+        assertEquals(Schedule.Daily, input.schedule)
+    }
+
+    @Test
+    fun `parses weekday and weekly schedules`() {
+        val weekdays =
+            HabitRequest(
+                name = "Run",
+                schedule = ScheduleDto("weekdays", days = listOf(1, 3, 5)),
+            ).validated(today)
+        assertEquals(
+            Schedule.Weekdays(setOf(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY, DayOfWeek.FRIDAY)),
+            weekdays.schedule,
+        )
+        val weekly = HabitRequest(name = "Gym", schedule = ScheduleDto("weekly", timesPerWeek = 3)).validated(today)
+        assertEquals(Schedule.TimesPerWeek(3), weekly.schedule)
+    }
+
+    @Test
+    fun `reports every invalid field at once`() {
+        val fields = errors(HabitRequest(name = " ", color = "blue", target = 0, schedule = null))
+        assertEquals(setOf("name", "color", "schedule", "target"), fields.keys)
+    }
+
+    @Test
+    fun `rejects bad schedules`() {
+        assertEquals(setOf("schedule.days"), errors(HabitRequest("Run", schedule = ScheduleDto("weekdays"))).keys)
+        assertEquals(
+            setOf("schedule.days"),
+            errors(HabitRequest("Run", schedule = ScheduleDto("weekdays", days = listOf(1, 8)))).keys,
+        )
+        assertEquals(
+            setOf("schedule.timesPerWeek"),
+            errors(HabitRequest("Gym", schedule = ScheduleDto("weekly", timesPerWeek = 8))).keys,
+        )
+        assertEquals(setOf("schedule.type"), errors(HabitRequest("Gym", schedule = ScheduleDto("monthly"))).keys)
+    }
+}
