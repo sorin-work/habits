@@ -108,6 +108,18 @@ class Api(
         return response.obj()["token"]!!.jsonPrimitive.content
     }
 
+    suspend fun createHabit(
+        token: String,
+        body: Map<String, Any?> = dailyHabit(),
+    ): Long {
+        val response = post("/api/habits", body, token)
+        assertEquals(HttpStatusCode.Created, response.status, response.bodyAsText())
+        return response
+            .obj()["id"]!!
+            .jsonPrimitive.content
+            .toLong()
+    }
+
     private fun HttpRequestBuilder.auth(token: String?) {
         if (token != null) bearerAuth(token)
     }
@@ -119,6 +131,17 @@ class Api(
         }
     }
 }
+
+fun dailyHabit(
+    name: String = "Read",
+    target: Int? = null,
+    startDate: String = "2026-03-01",
+) = mapOf(
+    "name" to name,
+    "schedule" to mapOf("type" to "daily"),
+    "target" to target,
+    "startDate" to startDate,
+)
 
 fun apiTest(
     clock: Clock = testClock,
