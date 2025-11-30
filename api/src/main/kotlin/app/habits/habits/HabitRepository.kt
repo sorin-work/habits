@@ -7,10 +7,12 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.update
 import java.time.Instant
 
 class HabitRepository(
@@ -55,6 +57,27 @@ class HabitRepository(
                 .where { Habits.id eq id }
                 .single()
                 .toHabit()
+        }
+
+    suspend fun update(
+        userId: Long,
+        id: Long,
+        input: HabitInput,
+        now: Instant,
+    ): Boolean =
+        newSuspendedTransaction(Dispatchers.IO, db) {
+            Habits.update({ (Habits.id eq id) and (Habits.userId eq userId) }) {
+                it.write(input)
+                it[updatedAt] = now
+            } > 0
+        }
+
+    suspend fun delete(
+        userId: Long,
+        id: Long,
+    ): Boolean =
+        newSuspendedTransaction(Dispatchers.IO, db) {
+            Habits.deleteWhere { (Habits.id eq id) and (Habits.userId eq userId) } > 0
         }
 }
 

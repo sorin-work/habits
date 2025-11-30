@@ -9,8 +9,10 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 
 fun Route.habitRoutes(
@@ -33,6 +35,15 @@ fun Route.habitRoutes(
                 get {
                     val user = users.get(call.userId)
                     call.respond(service.get(user, call.longPath("id")).toResponse())
+                }
+                put {
+                    val user = users.get(call.userId)
+                    call.respond(service.update(user, call.longPath("id"), call.receive()).toResponse())
+                }
+                delete {
+                    val user = users.get(call.userId)
+                    service.delete(user, call.longPath("id"))
+                    call.respond(HttpStatusCode.NoContent)
                 }
             }
         }

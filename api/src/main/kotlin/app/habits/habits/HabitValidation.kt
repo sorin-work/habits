@@ -13,8 +13,10 @@ private val HEX_COLOR = Regex("^#[0-9a-fA-F]{6}$")
  * Checks a create/update request and turns it into a [HabitInput]. [today] is the user's local date and
  * bounds how far ahead a start date may be.
  */
-fun HabitRequest.validated(today: LocalDate): HabitInput {
-    val defaultStartDate = today
+fun HabitRequest.validated(
+    today: LocalDate,
+    defaultStartDate: LocalDate = today,
+): HabitInput {
     val name = name.trim()
     val description = description?.trim()
     val unit = unit?.trim()?.ifEmpty { null }
