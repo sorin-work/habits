@@ -1,0 +1,75 @@
+package app.habits.checkins
+
+import app.habits.db.CheckIns
+import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.sql.update
+import java.time.Instant
+import java.time.LocalDate
+
+class CheckInRepository(
+    private val db: Database,
+) {
+    suspend fun upsert(
+        habitId: Long,
+        day: LocalDate,
+        value: Int,
+        note: String?,
+        now: Instant,
+    ): CheckIn =
+        newSuspendedTransaction(Dispatchers.IO, db) {
+            val updated =
+                CheckIns.update({ (CheckIns.habitId eq habitId) and (CheckIns.day eq day) }) {
+                    it[CheckIns.value] = value
+                    it[CheckIns.note] = note
+                    it[updatedAt] = now
+                }
+            if (updated == 0) {
+                CheckIns.insert {
+                    it[CheckIns.habitId] = habitId
+                    it[CheckIns.day] = day
+                    it[CheckIns.value] = value
+                    it[CheckIns.note] = note
+                    it[createdAt] = now
+                    it[updatedAt] = now
+                }
+            }
+            CheckIn(habitId, day, value, note, now)
+        }
+
+    suspend fun delete(
+        habitId: Long,
+        day: LocalDate,
+    ): Boolean =
+        newSuspendedTransaction(Dispatchers.IO, db) {
+            CheckIns.deleteWhere { (CheckIns.habitId eq habitId) and (CheckIns.day eq day) } > 0
+        }
+
+    suspend fun find(
+        habitId: Long,
+        day: LocalDate,
+    ): CheckIn? =
+        newSuspendedTransaction(Dispatchers.IO, db) {
+            CheckIns
+                .selectAll()
+                .where { (CheckIns.habitId eq habitId) and (CheckIns.day eq day) }
+                .singleOrNull()
+                ?.toCheckIn()
+        }
+}
+
+private fun ResultRow.toCheckIn() =
+    CheckIn(
+        habitId = this[CheckIns.habitId],
+        day = this[CheckIns.day],
+        value = this[CheckIns.value],
+        note = this[CheckIns.note],
+        updatedAt = this[CheckIns.updatedAt],
+    )

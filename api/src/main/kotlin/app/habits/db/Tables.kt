@@ -33,3 +33,19 @@ object Habits : Table("habits") {
 
     override val primaryKey = PrimaryKey(id)
 }
+
+object CheckIns : Table("check_ins") {
+    val id = long("id").autoIncrement()
+    val habitId = long("habit_id").references(Habits.id, onDelete = ReferenceOption.CASCADE)
+    val day = date("day")
+    val value = integer("value")
+    val note = varchar("note", 500).nullable()
+    val createdAt = timestamp("created_at")
+    val updatedAt = timestamp("updated_at")
+
+    override val primaryKey = PrimaryKey(id)
+
+    init {
+        uniqueIndex("check_ins_habit_day_key", habitId, day)
+    }
+}
