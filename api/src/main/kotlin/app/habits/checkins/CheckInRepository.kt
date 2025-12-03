@@ -1,7 +1,7 @@
 package app.habits.checkins
 
 import app.habits.db.CheckIns
-import kotlinx.coroutines.Dispatchers
+import app.habits.db.query
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -9,7 +9,6 @@ import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.update
 import java.time.Instant
 import java.time.LocalDate
@@ -24,7 +23,7 @@ class CheckInRepository(
         note: String?,
         now: Instant,
     ): CheckIn =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             val updated =
                 CheckIns.update({ (CheckIns.habitId eq habitId) and (CheckIns.day eq day) }) {
                     it[CheckIns.value] = value
@@ -48,7 +47,7 @@ class CheckInRepository(
         habitId: Long,
         day: LocalDate,
     ): Boolean =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             CheckIns.deleteWhere { (CheckIns.habitId eq habitId) and (CheckIns.day eq day) } > 0
         }
 
@@ -56,7 +55,7 @@ class CheckInRepository(
         habitId: Long,
         day: LocalDate,
     ): CheckIn? =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             CheckIns
                 .selectAll()
                 .where { (CheckIns.habitId eq habitId) and (CheckIns.day eq day) }

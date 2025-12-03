@@ -1,13 +1,12 @@
 package app.habits.users
 
 import app.habits.db.Users
-import kotlinx.coroutines.Dispatchers
+import app.habits.db.query
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Instant
 import java.time.ZoneId
 
@@ -15,7 +14,7 @@ class UserRepository(
     private val db: Database,
 ) {
     suspend fun findByEmail(email: String): User? =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             Users
                 .selectAll()
                 .where { Users.email eq email }
@@ -24,7 +23,7 @@ class UserRepository(
         }
 
     suspend fun findById(id: Long): User? =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             Users
                 .selectAll()
                 .where { Users.id eq id }
@@ -39,7 +38,7 @@ class UserRepository(
         timeZone: ZoneId,
         createdAt: Instant,
     ): User =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             val id =
                 Users.insert {
                     it[Users.email] = email

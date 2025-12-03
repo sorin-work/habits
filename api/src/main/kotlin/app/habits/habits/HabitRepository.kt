@@ -1,7 +1,7 @@
 package app.habits.habits
 
 import app.habits.db.Habits
-import kotlinx.coroutines.Dispatchers
+import app.habits.db.query
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
@@ -11,7 +11,6 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.update
 import java.time.Instant
 
@@ -19,7 +18,7 @@ class HabitRepository(
     private val db: Database,
 ) {
     suspend fun list(userId: Long): List<Habit> =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             Habits
                 .selectAll()
                 .where { Habits.userId eq userId }
@@ -31,7 +30,7 @@ class HabitRepository(
         userId: Long,
         id: Long,
     ): Habit? =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             Habits
                 .selectAll()
                 .where { (Habits.id eq id) and (Habits.userId eq userId) }
@@ -44,7 +43,7 @@ class HabitRepository(
         input: HabitInput,
         now: Instant,
     ): Habit =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             val id =
                 Habits.insert {
                     it[Habits.userId] = userId
@@ -65,7 +64,7 @@ class HabitRepository(
         input: HabitInput,
         now: Instant,
     ): Boolean =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             Habits.update({ (Habits.id eq id) and (Habits.userId eq userId) }) {
                 it.write(input)
                 it[updatedAt] = now
@@ -76,7 +75,7 @@ class HabitRepository(
         userId: Long,
         id: Long,
     ): Boolean =
-        newSuspendedTransaction(Dispatchers.IO, db) {
+        db.query {
             Habits.deleteWhere { (Habits.id eq id) and (Habits.userId eq userId) } > 0
         }
 }

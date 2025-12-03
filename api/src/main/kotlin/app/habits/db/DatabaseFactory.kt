@@ -3,8 +3,12 @@ package app.habits.db
 import app.habits.config.DatabaseConfig
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.Transaction
+import org.jetbrains.exposed.sql.transactions.transaction
 import javax.sql.DataSource
 
 object DatabaseFactory {
@@ -32,3 +36,9 @@ object DatabaseFactory {
 
     fun connect(dataSource: DataSource): Database = Database.connect(dataSource)
 }
+
+/** Runs [block] in a transaction on the IO dispatcher. */
+suspend fun <T> Database.query(block: Transaction.() -> T): T =
+    withContext(Dispatchers.IO) {
+        transaction(this@query) { block() }
+    }
