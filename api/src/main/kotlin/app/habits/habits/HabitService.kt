@@ -6,6 +6,7 @@ import app.habits.checkins.CheckInRequest
 import app.habits.checkins.MAX_CHECK_IN_VALUE
 import app.habits.checkins.MAX_NOTE_LENGTH
 import app.habits.common.ApiException
+import app.habits.common.DateRange
 import app.habits.common.NotFoundException
 import app.habits.common.today
 import app.habits.common.validate
@@ -78,6 +79,15 @@ class HabitService(
     ) {
         val habit = get(user, id)
         if (!checkIns.delete(habit.id, date)) throw NotFoundException("Check-in")
+    }
+
+    suspend fun checkIns(
+        user: User,
+        id: Long,
+        range: DateRange,
+    ): Pair<Habit, List<CheckIn>> {
+        val habit = get(user, id)
+        return habit to checkIns.list(habit.id, range)
     }
 
     private fun checkDate(

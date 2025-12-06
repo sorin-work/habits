@@ -1,9 +1,12 @@
 package app.habits.checkins
 
+import app.habits.common.DateRange
 import app.habits.db.CheckIns
 import app.habits.db.query
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.SortOrder
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.between
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
@@ -61,6 +64,19 @@ class CheckInRepository(
                 .where { (CheckIns.habitId eq habitId) and (CheckIns.day eq day) }
                 .singleOrNull()
                 ?.toCheckIn()
+        }
+
+    /** Check-ins of one habit in [range], newest first. */
+    suspend fun list(
+        habitId: Long,
+        range: DateRange,
+    ): List<CheckIn> =
+        db.query {
+            CheckIns
+                .selectAll()
+                .where { (CheckIns.habitId eq habitId) and (CheckIns.day.between(range.from, range.to)) }
+                .orderBy(CheckIns.day to SortOrder.DESC)
+                .map { it.toCheckIn() }
         }
 }
 

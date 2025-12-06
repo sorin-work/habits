@@ -64,6 +64,6 @@ fun Application.module(
         healthRoutes(db)
         authRoutes(userService)
         userRoutes(userService)
-        habitRoutes(userService, habitService)
+        habitRoutes(userService, habitService, clock)
     }
 }
