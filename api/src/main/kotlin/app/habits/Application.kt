@@ -3,6 +3,7 @@ package app.habits
 import app.habits.auth.JwtService
 import app.habits.auth.PasswordHasher
 import app.habits.auth.configureSecurity
+import app.habits.checkins.CheckInRepository
 import app.habits.common.AppJson
 import app.habits.common.configureErrorHandling
 import app.habits.config.AppConfig
@@ -48,8 +49,9 @@ fun Application.module(
     val jwt = JwtService(config.jwt, clock)
     val userRepository = UserRepository(db)
     val habitRepository = HabitRepository(db)
+    val checkInRepository = CheckInRepository(db)
     val userService = UserService(userRepository, hasher, jwt, clock)
-    val habitService = HabitService(habitRepository, clock)
+    val habitService = HabitService(habitRepository, checkInRepository, clock)
 
     install(ContentNegotiation) { json(AppJson) }
     install(CallLogging) {

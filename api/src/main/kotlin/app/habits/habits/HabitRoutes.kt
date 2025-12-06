@@ -2,6 +2,8 @@ package app.habits.habits
 
 import app.habits.auth.AUTH_JWT
 import app.habits.auth.userId
+import app.habits.checkins.CheckInResponse
+import app.habits.common.datePath
 import app.habits.common.longPath
 import app.habits.users.UserService
 import io.ktor.http.HttpStatusCode
@@ -43,6 +45,29 @@ fun Route.habitRoutes(
                 delete {
                     val user = users.get(call.userId)
                     service.delete(user, call.longPath("id"))
+                    call.respond(HttpStatusCode.NoContent)
+                }
+
+                put("/checkins/{date}") {
+                    val user = users.get(call.userId)
+                    val (habit, entry) =
+                        service.checkIn(
+                            user,
+                            call.longPath("id"),
+                            call.datePath("date"),
+                            call.receive(),
+                        )
+                    call.respond(
+                        CheckInResponse(
+                            entry.day,
+                            entry.value,
+                            entry.updatedAt,
+                        ),
+                    )
+                }
+                delete("/checkins/{date}") {
+                    val user = users.get(call.userId)
+                    service.undoCheckIn(user, call.longPath("id"), call.datePath("date"))
                     call.respond(HttpStatusCode.NoContent)
                 }
             }
