@@ -62,6 +62,7 @@ fun Route.habitRoutes(
                             entry.day,
                             entry.value,
                             entry.note,
+                            habit.isComplete(entry.value),
                             entry.updatedAt,
                         ),
                     )

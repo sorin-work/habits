@@ -25,6 +25,7 @@ data class CheckInResponse(
     @Serializable(with = LocalDateSerializer::class) val date: LocalDate,
     val value: Int,
     val note: String?,
+    val completed: Boolean,
     @Serializable(with = InstantSerializer::class) val updatedAt: Instant,
 )
 
