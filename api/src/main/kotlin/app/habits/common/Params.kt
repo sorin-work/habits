@@ -43,11 +43,15 @@ data class DateRange(
 fun ApplicationCall.dateRange(
     defaultFrom: LocalDate,
     defaultTo: LocalDate,
+    maxDays: Long = 731,
 ): DateRange {
     val from = dateQuery("from") ?: defaultFrom
     val to = dateQuery("to") ?: defaultTo
     if (to.isBefore(from)) {
         throw ApiException(HttpStatusCode.BadRequest, "invalid_range", "'to' must not be before 'from'")
+    }
+    if (from.plusDays(maxDays).isBefore(to)) {
+        throw ApiException(HttpStatusCode.BadRequest, "invalid_range", "A range can cover at most $maxDays days")
     }
     return DateRange(from, to)
 }
