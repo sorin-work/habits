@@ -61,6 +61,7 @@ fun Route.habitRoutes(
                         CheckInResponse(
                             entry.day,
                             entry.value,
+                            entry.note,
                             entry.updatedAt,
                         ),
                     )

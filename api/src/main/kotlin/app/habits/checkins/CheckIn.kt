@@ -17,13 +17,16 @@ data class CheckIn(
 @Serializable
 data class CheckInRequest(
     val value: Int? = null,
+    val note: String? = null,
 )
 
 @Serializable
 data class CheckInResponse(
     @Serializable(with = LocalDateSerializer::class) val date: LocalDate,
     val value: Int,
+    val note: String?,
     @Serializable(with = InstantSerializer::class) val updatedAt: Instant,
 )
 
 const val MAX_CHECK_IN_VALUE = 1_000_000
+const val MAX_NOTE_LENGTH = 500

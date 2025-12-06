@@ -4,6 +4,7 @@ import app.habits.checkins.CheckIn
 import app.habits.checkins.CheckInRepository
 import app.habits.checkins.CheckInRequest
 import app.habits.checkins.MAX_CHECK_IN_VALUE
+import app.habits.checkins.MAX_NOTE_LENGTH
 import app.habits.common.ApiException
 import app.habits.common.NotFoundException
 import app.habits.common.today
@@ -59,10 +60,13 @@ class HabitService(
     ): Pair<Habit, CheckIn> {
         val habit = get(user, id)
         checkDate(user, habit, date)
-        val note: String? = null
+        val note = request.note?.trim()?.ifEmpty { null }
         val value = request.value ?: 1
         validate {
             check("value", value in 1..MAX_CHECK_IN_VALUE) { "Value must be between 1 and $MAX_CHECK_IN_VALUE" }
+            check("note", (note?.length ?: 0) <= MAX_NOTE_LENGTH) {
+                "Note must be at most $MAX_NOTE_LENGTH characters"
+            }
         }
         return habit to checkIns.upsert(habit.id, date, value, note, clock.instant())
     }
