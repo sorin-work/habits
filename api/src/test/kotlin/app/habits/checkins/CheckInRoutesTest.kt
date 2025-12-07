@@ -90,4 +90,18 @@ class CheckInRoutesTest {
                 get("/api/habits/$id/checkins?from=2026-03-12&to=2026-03-05", token).status,
             )
         }
+
+    @Test
+    fun `future days are decided in the user's time zone`() =
+        apiTest {
+            // 10:00 UTC on the 18th is already the 19th in Kiritimati (UTC+14).
+            val token = register(timeZone = "Pacific/Kiritimati")
+            val id = createHabit(token)
+            assertEquals(
+                HttpStatusCode.OK,
+                put("/api/habits/$id/checkins/2026-03-19", mapOf<String, Any>(), token).status,
+            )
+            val tooEarly = put("/api/habits/$id/checkins/2026-03-20", mapOf<String, Any>(), token)
+            assertEquals(HttpStatusCode.BadRequest, tooEarly.status)
+        }
 }

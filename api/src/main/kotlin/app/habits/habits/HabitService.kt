@@ -95,7 +95,7 @@ class HabitService(
         habit: Habit,
         date: LocalDate,
     ) {
-        if (date.isAfter(LocalDate.now(clock))) {
+        if (date.isAfter(clock.today(user.timeZone))) {
             throw ApiException(
                 HttpStatusCode.BadRequest,
                 "future_date",
