@@ -7,6 +7,9 @@ import app.habits.habits.HabitRepository
 import app.habits.habits.HabitResponse
 import app.habits.habits.toResponse
 import app.habits.stats.StatsService
+import app.habits.stats.StreakCalculator
+import app.habits.stats.StreakResponse
+import app.habits.stats.toResponse
 import app.habits.users.User
 import kotlinx.serialization.Serializable
 import java.time.Clock
@@ -20,6 +23,7 @@ data class TodayHabit(
     val value: Int,
     val note: String?,
     val completed: Boolean,
+    val streak: StreakResponse,
 )
 
 @Serializable
@@ -54,6 +58,10 @@ class TodayService(
                     value = entry?.value ?: 0,
                     note = entry?.note,
                     completed = doneToday,
+                    streak =
+                        StreakCalculator
+                            .calculate(habit.schedule, habit.startDate, completed, date, DayOfWeek.MONDAY)
+                            .toResponse(),
                 )
             }
 
