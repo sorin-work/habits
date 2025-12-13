@@ -78,6 +78,16 @@ class CheckInRepository(
                 .orderBy(CheckIns.day to SortOrder.DESC)
                 .map { it.toCheckIn() }
         }
+
+    /** Every check-in of one habit, oldest first. */
+    suspend fun all(habitId: Long): List<CheckIn> =
+        db.query {
+            CheckIns
+                .selectAll()
+                .where { CheckIns.habitId eq habitId }
+                .orderBy(CheckIns.day to SortOrder.ASC)
+                .map { it.toCheckIn() }
+        }
 }
 
 private fun ResultRow.toCheckIn() =

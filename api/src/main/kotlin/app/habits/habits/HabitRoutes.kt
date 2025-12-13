@@ -7,6 +7,7 @@ import app.habits.common.datePath
 import app.habits.common.dateRange
 import app.habits.common.longPath
 import app.habits.common.today
+import app.habits.stats.StatsService
 import app.habits.users.UserService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
@@ -23,6 +24,7 @@ import java.time.Clock
 fun Route.habitRoutes(
     users: UserService,
     service: HabitService,
+    stats: StatsService,
     clock: Clock,
 ) {
     authenticate(AUTH_JWT) {
@@ -40,7 +42,7 @@ fun Route.habitRoutes(
             route("/{id}") {
                 get {
                     val user = users.get(call.userId)
-                    call.respond(service.get(user, call.longPath("id")).toResponse())
+                    call.respond(stats.detail(user, call.longPath("id")))
                 }
                 put {
                     val user = users.get(call.userId)
