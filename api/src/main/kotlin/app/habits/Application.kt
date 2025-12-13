@@ -13,6 +13,8 @@ import app.habits.habits.HabitService
 import app.habits.habits.habitRoutes
 import app.habits.health.healthRoutes
 import app.habits.stats.StatsService
+import app.habits.today.TodayService
+import app.habits.today.todayRoutes
 import app.habits.users.UserRepository
 import app.habits.users.UserService
 import app.habits.users.authRoutes
@@ -54,6 +56,7 @@ fun Application.module(
     val userService = UserService(userRepository, hasher, jwt, clock)
     val habitService = HabitService(habitRepository, checkInRepository, clock)
     val statsService = StatsService(habitService, checkInRepository, clock)
+    val todayService = TodayService(habitRepository, checkInRepository, clock)
 
     install(ContentNegotiation) { json(AppJson) }
     install(CallLogging) {
@@ -67,5 +70,6 @@ fun Application.module(
         authRoutes(userService)
         userRoutes(userService)
         habitRoutes(userService, habitService, statsService, clock)
+        todayRoutes(userService, todayService)
     }
 }
