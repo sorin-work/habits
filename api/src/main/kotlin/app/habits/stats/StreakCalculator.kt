@@ -78,6 +78,7 @@ object StreakCalculator {
                     run++
                     if (run > best) best = run
                 }
+                week == currentWeek -> Unit
                 else -> run = 0
             }
             week = week.plusWeeks(1)

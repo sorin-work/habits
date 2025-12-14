@@ -64,6 +64,15 @@ class StreakCalculatorTest {
     }
 
     @Test
+    fun `weekly goals count weeks in a row where the goal was met`() {
+        val schedule = Schedule.TimesPerWeek(2)
+        // Weeks starting Mon 2, Mon 9 met; week of Mon 16 (current) has one so far.
+        val completed = setOf(2, 4, 10, 13, 17).map { LocalDate.of(2026, 3, it) }.toSet()
+        val streaks = StreakCalculator.calculate(schedule, LocalDate.of(2026, 3, 2), completed, today, MONDAY)
+        assertEquals(Streaks(2, 2, StreakUnit.WEEKS), streaks)
+    }
+
+    @Test
     fun `the current week counts once its goal is met`() {
         val schedule = Schedule.TimesPerWeek(2)
         val completed = setOf(2, 4, 16, 17).map { LocalDate.of(2026, 3, it) }.toSet()
