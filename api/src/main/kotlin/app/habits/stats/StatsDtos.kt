@@ -13,9 +13,16 @@ data class StreakResponse(
 fun Streaks.toResponse() = StreakResponse(current, best, unit.name.lowercase())
 
 @Serializable
+data class WeekProgress(
+    val done: Int,
+    val goal: Int,
+)
+
+@Serializable
 data class HabitSummary(
     val streak: StreakResponse,
     val totalCheckIns: Int,
+    val thisWeek: WeekProgress? = null,
 )
 
 @Serializable

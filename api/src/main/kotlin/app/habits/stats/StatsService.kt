@@ -5,6 +5,7 @@ import app.habits.checkins.CheckInRepository
 import app.habits.common.today
 import app.habits.habits.Habit
 import app.habits.habits.HabitService
+import app.habits.habits.Schedule
 import app.habits.habits.toResponse
 import app.habits.users.User
 import java.time.Clock
@@ -36,6 +37,7 @@ class StatsService(
         return HabitSummary(
             streak = streaks.toResponse(),
             totalCheckIns = history.size,
+            thisWeek = weekProgress(habit, completed, today, DayOfWeek.MONDAY),
         )
     }
 
@@ -44,5 +46,17 @@ class StatsService(
             habit: Habit,
             history: List<CheckIn>,
         ): Set<LocalDate> = history.filter { habit.isComplete(it.value) }.map { it.day }.toSet()
+
+        fun weekProgress(
+            habit: Habit,
+            completed: Set<LocalDate>,
+            today: LocalDate,
+            weekStart: DayOfWeek,
+        ): WeekProgress? {
+            val schedule = habit.schedule as? Schedule.TimesPerWeek ?: return null
+            val start = today.startOfWeek(weekStart)
+            val done = completed.count { !it.isBefore(start) && !it.isAfter(today) }
+            return WeekProgress(done, StreakCalculator.requiredInWeek(schedule.times, start, habit.startDate))
+        }
     }
 }
