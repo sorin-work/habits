@@ -3,6 +3,7 @@ package app.habits.stats
 import app.habits.habits.Schedule
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 enum class StreakUnit { DAYS, WEEKS }
 
@@ -71,7 +72,7 @@ object StreakCalculator {
         var best = 0
         while (!week.isAfter(currentWeek)) {
             val weekEnd = week.plusDays(6)
-            val required = times
+            val required = requiredInWeek(times, week, startDate)
             val done = completedDays.count { !it.isBefore(latest(week, startDate)) && !it.isAfter(weekEnd) }
             when {
                 done >= required -> {
@@ -84,5 +85,21 @@ object StreakCalculator {
             week = week.plusWeeks(1)
         }
         return Streaks(run, best, StreakUnit.WEEKS)
+    }
+
+    /**
+     * The goal for one week. In the week a habit starts there may be fewer days left than the goal, so
+     * a 5-times-a-week habit started on a Saturday only needs the two remaining days.
+     */
+    fun requiredInWeek(
+        times: Int,
+        weekStartDate: LocalDate,
+        habitStart: LocalDate,
+    ): Int {
+        val weekEnd = weekStartDate.plusDays(6)
+        if (habitStart.isAfter(weekEnd)) return 0
+        val firstDay = latest(weekStartDate, habitStart)
+        val availableDays = ChronoUnit.DAYS.between(firstDay, weekEnd).toInt() + 1
+        return minOf(times, availableDays)
     }
 }

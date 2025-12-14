@@ -83,6 +83,21 @@ class StreakCalculatorTest {
     }
 
     @Test
+    fun `the first week only asks for the days that were left`() {
+        // Started on Saturday the 7th with a goal of 3: one check-in that weekend is not enough...
+        val schedule = Schedule.TimesPerWeek(3)
+        val started = LocalDate.of(2026, 3, 7)
+        val oneDay = setOf(LocalDate.of(2026, 3, 8))
+        assertEquals(
+            0,
+            StreakCalculator.calculate(schedule, started, oneDay, LocalDate.of(2026, 3, 10), MONDAY).current,
+        )
+        // ...but both remaining days are.
+        val both = setOf(LocalDate.of(2026, 3, 7), LocalDate.of(2026, 3, 8))
+        assertEquals(1, StreakCalculator.calculate(schedule, started, both, LocalDate.of(2026, 3, 10), MONDAY).current)
+    }
+
+    @Test
     fun `weeks follow the user's week start`() {
         val schedule = Schedule.TimesPerWeek(2)
         // Sun 15 + Mon 16 are the same week when weeks start on Sunday, but not when they start on Monday.
@@ -91,5 +106,13 @@ class StreakCalculatorTest {
         val monday = StreakCalculator.calculate(schedule, LocalDate.of(2026, 3, 1), completed, today, MONDAY)
         assertEquals(1, sunday.current)
         assertEquals(0, monday.current)
+    }
+
+    @Test
+    fun `required days in the first week`() {
+        val monday = LocalDate.of(2026, 3, 16)
+        assertEquals(3, StreakCalculator.requiredInWeek(3, monday, monday))
+        assertEquals(2, StreakCalculator.requiredInWeek(3, monday, LocalDate.of(2026, 3, 21)))
+        assertEquals(0, StreakCalculator.requiredInWeek(3, monday, LocalDate.of(2026, 3, 30)))
     }
 }
