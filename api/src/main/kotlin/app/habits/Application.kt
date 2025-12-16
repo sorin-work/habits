@@ -19,6 +19,7 @@ import app.habits.users.UserRepository
 import app.habits.users.UserService
 import app.habits.users.authRoutes
 import app.habits.users.userRoutes
+import io.ktor.http.HttpHeaders
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStopped
@@ -27,8 +28,10 @@ import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.routing.routing
 import org.slf4j.event.Level
+import java.net.URI
 import java.time.Clock
 import java.util.TimeZone
 
@@ -61,6 +64,15 @@ fun Application.module(
     install(ContentNegotiation) { json(AppJson) }
     install(CallLogging) {
         level = Level.INFO
+    }
+    install(CORS) {
+        config.corsAllowedOrigins.forEach { origin ->
+            val uri = URI(origin)
+            val host = if (uri.port == -1) uri.host else "${uri.host}:${uri.port}"
+            allowHost(host, schemes = listOf(uri.scheme))
+        }
+        allowHeader(HttpHeaders.Authorization)
+        allowHeader(HttpHeaders.ContentType)
     }
     configureErrorHandling()
     configureSecurity(jwt)

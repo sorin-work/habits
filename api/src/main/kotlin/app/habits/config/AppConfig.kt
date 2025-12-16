@@ -19,6 +19,7 @@ data class AppConfig(
     val port: Int,
     val database: DatabaseConfig,
     val jwt: JwtConfig,
+    val corsAllowedOrigins: List<String>,
     val bcryptCost: Int = 12,
 ) {
     companion object {
@@ -36,6 +37,11 @@ data class AppConfig(
                         password = env["DATABASE_PASSWORD"] ?: "habits",
                     ),
                 jwt = JwtConfig(secret = secret, ttl = parseDuration(env["JWT_TTL"] ?: "7d")),
+                corsAllowedOrigins =
+                    (env["CORS_ALLOWED_ORIGINS"] ?: "http://localhost:5173")
+                        .split(",")
+                        .map { it.trim() }
+                        .filter { it.isNotEmpty() },
             )
         }
 
