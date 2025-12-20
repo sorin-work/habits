@@ -12,6 +12,7 @@ export function Layout() {
       <header className="topbar">
         <div className="topbar-inner">
           <NavLink to="/" className="brand">
+            <img src="/favicon.svg" alt="" width={24} height={24} />
             Habits
           </NavLink>
           <nav className="nav" aria-label="Main">
