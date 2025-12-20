@@ -1,6 +1,8 @@
 import { Route, Routes } from 'react-router';
 import { GuestOnly, RequireAuth } from './auth/guards';
+import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
+import { NotFoundPage } from './pages/NotFoundPage';
 import { SignupPage } from './pages/SignupPage';
 
 export function App() {
@@ -23,13 +25,15 @@ export function App() {
         }
       />
       <Route
-        path="/"
         element={
           <RequireAuth>
-            <h1>Habits</h1>
+            <Layout />
           </RequireAuth>
         }
-      />
+      >
+        <Route index element={<p>Nothing here yet.</p>} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
     </Routes>
   );
 }
