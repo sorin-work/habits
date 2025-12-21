@@ -312,11 +312,70 @@ textarea:focus {
   width: auto;
 }
 
+.inline select {
+  width: auto;
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  width: fit-content;
+}
+
+.segmented label,
+.segmented button {
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  background: var(--surface);
+  border: none;
+  color: var(--text);
+  font: inherit;
+  font-weight: 500;
+}
+
+.segmented label + label,
+.segmented button + button {
+  border-left: 1px solid var(--border);
+}
+
+.segmented label.active,
+.segmented button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
 .weekday-picker,
 .color-picker {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
+}
+
+.weekday {
+  min-width: 3rem;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+}
+
+.weekday[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
 }
 
 .swatch {
