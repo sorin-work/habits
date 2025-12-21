@@ -4,6 +4,7 @@ import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SignupPage } from './pages/SignupPage';
+import { TodayPage } from './pages/TodayPage';
 
 export function App() {
   return (
@@ -31,7 +32,7 @@ export function App() {
           </RequireAuth>
         }
       >
-        <Route index element={<p>Nothing here yet.</p>} />
+        <Route index element={<TodayPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

@@ -125,6 +125,24 @@ a {
   padding: 1.5rem 1rem 4rem;
 }
 
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.page-header p {
+  margin: 0.25rem 0 0;
+}
+
 .header-actions,
 .day-nav,
 .row-actions,
@@ -134,6 +152,19 @@ a {
   gap: 0.5rem;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.page-loading {
+  color: var(--muted);
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
 }
 
 .error-box {
@@ -258,6 +289,111 @@ textarea:focus {
   color: var(--muted);
   font-size: 0.85rem;
   margin: 0;
+}
+
+/* Habits */
+
+.habit-dot {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  background: var(--habit-color);
+  flex-shrink: 0;
+}
+
+.habit-name {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.habit-name:hover {
+  text-decoration: underline;
+}
+
+.habit-list,
+.today-list,
+.note-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.today-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--habit-color);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+}
+
+.today-item.completed {
+  background: color-mix(in srgb, var(--habit-color) 7%, var(--surface));
+}
+
+.today-item-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.today-item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.check-button {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  border: 2px solid var(--habit-color);
+  background: transparent;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.check-button.done {
+  background: var(--habit-color);
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.counter-step {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.counter-step:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.counter-value {
+  min-width: 4.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.counter-value.done {
+  color: var(--habit-color);
 }
 
 /* Auth */
