@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router';
 import { GuestOnly, RequireAuth } from './auth/guards';
 import { Layout } from './components/Layout';
 import { LoginPage } from './pages/LoginPage';
+import { NewHabitPage } from './pages/NewHabitPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SignupPage } from './pages/SignupPage';
 import { TodayPage } from './pages/TodayPage';
@@ -33,6 +34,7 @@ export function App() {
         }
       >
         <Route index element={<TodayPage />} />
+        <Route path="habits/new" element={<NewHabitPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

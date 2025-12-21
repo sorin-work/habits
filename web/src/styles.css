@@ -131,6 +131,10 @@ a {
   gap: 1rem;
 }
 
+.page.narrow {
+  max-width: 560px;
+}
+
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -289,6 +293,26 @@ textarea:focus {
   color: var(--muted);
   font-size: 0.85rem;
   margin: 0;
+}
+
+.weekday-picker,
+.color-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.swatch {
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.swatch[aria-checked='true'] {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
 }
 
 /* Habits */
