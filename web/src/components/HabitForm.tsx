@@ -20,6 +20,9 @@ type Errors = Record<string, string>;
 export function HabitForm({ habit, today, submitLabel, onSubmit, onCancel }: HabitFormProps) {
   const [name, setName] = useState(habit?.name ?? '');
   const [color, setColor] = useState(habit?.color ?? DEFAULT_COLOR);
+  const [measured, setMeasured] = useState(habit?.target != null);
+  const [target, setTarget] = useState(habit?.target != null ? String(habit.target) : '');
+  const [unit, setUnit] = useState(habit?.unit ?? '');
   const [startDate, setStartDate] = useState(habit?.startDate ?? today);
   const [errors, setErrors] = useState<Errors>({});
   const [formError, setFormError] = useState<string | null>(null);
@@ -28,6 +31,10 @@ export function HabitForm({ habit, today, submitLabel, onSubmit, onCancel }: Hab
   const validate = (): Errors => {
     const next: Errors = {};
     if (!name.trim()) next.name = 'Give the habit a name';
+    if (measured) {
+      const value = Number(target);
+      if (!Number.isInteger(value) || value < 1) next.target = 'Enter a whole number above zero';
+    }
     if (!startDate) next.startDate = 'Pick a start date';
     return next;
   };
@@ -44,8 +51,8 @@ export function HabitForm({ habit, today, submitLabel, onSubmit, onCancel }: Hab
       description: null,
       color,
       schedule: { type: 'daily' },
-      target: null,
-      unit: null,
+      target: measured ? Number(target) : null,
+      unit: measured && unit.trim() ? unit.trim() : null,
       startDate,
     };
     setSaving(true);
@@ -83,6 +90,38 @@ export function HabitForm({ habit, today, submitLabel, onSubmit, onCancel }: Hab
         <span className="label">Colour</span>
         <ColorPicker value={color} onChange={setColor} />
       </div>
+
+      <label className="checkbox">
+        <input type="checkbox" checked={measured} onChange={(e) => setMeasured(e.target.checked)} />
+        Track an amount each day (e.g. 8 glasses, 30 minutes)
+      </label>
+      {measured && (
+        <div className="field-row">
+          <Field label="Daily target" error={errors.target}>
+            {(props) => (
+              <input
+                {...props}
+                type="number"
+                inputMode="numeric"
+                min={1}
+                value={target}
+                onChange={(e) => setTarget(e.target.value)}
+              />
+            )}
+          </Field>
+          <Field label="Unit (optional)" error={errors.unit}>
+            {(props) => (
+              <input
+                {...props}
+                value={unit}
+                maxLength={20}
+                placeholder="glasses"
+                onChange={(e) => setUnit(e.target.value)}
+              />
+            )}
+          </Field>
+        </div>
+      )}
 
       <Field
         label="Start date"

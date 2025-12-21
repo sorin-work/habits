@@ -260,6 +260,12 @@ a {
   padding: 0;
 }
 
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 input,
 select,
 textarea {
@@ -293,6 +299,17 @@ textarea:focus {
   color: var(--muted);
   font-size: 0.85rem;
   margin: 0;
+}
+
+.checkbox,
+.inline {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.checkbox input {
+  width: auto;
 }
 
 .weekday-picker,
