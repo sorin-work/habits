@@ -10,10 +10,10 @@ export function NewHabitPage() {
   const today = useQuery({ queryKey: ['today', 'current'], queryFn: () => fetchToday() });
   const create = useMutation({
     mutationFn: createHabit,
-    onSuccess: () => {
+    onSuccess: (habit) => {
       void queryClient.invalidateQueries({ queryKey: ['habits'] });
       void queryClient.invalidateQueries({ queryKey: ['today'] });
-      navigate('/');
+      navigate(`/habits/${habit.id}`);
     },
   });
 

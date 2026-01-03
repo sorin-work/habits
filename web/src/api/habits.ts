@@ -2,11 +2,14 @@ import { api } from './client';
 import type {
   CheckIn,
   Habit,
+  HabitDetail,
   HabitInput,
   TodayResponse,
 } from './types';
 
 export const listHabits = () => api.get<Habit[]>('/api/habits');
+
+export const fetchHabit = (id: number) => api.get<HabitDetail>(`/api/habits/${id}`);
 
 export const createHabit = (input: HabitInput) => api.post<Habit>('/api/habits', input);
 

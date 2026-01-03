@@ -41,6 +41,23 @@ export interface WeekProgress {
   goal: number;
 }
 
+export interface Completion {
+  expected: number;
+  completed: number;
+  rate: number | null;
+}
+
+export interface HabitSummary {
+  streak: Streak;
+  totalCheckIns: number;
+  thisWeek: WeekProgress | null;
+}
+
+export interface HabitDetail {
+  habit: Habit;
+  summary: HabitSummary;
+}
+
 export interface CheckIn {
   date: string;
   value: number;
