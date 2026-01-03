@@ -6,10 +6,15 @@ export function errorText(error: unknown): string {
   return 'Something went wrong';
 }
 
-export function ErrorMessage({ error }: { error: unknown }) {
+export function ErrorMessage({ error, retry }: { error: unknown; retry?: () => void }) {
   return (
     <div className="error-box" role="alert">
       <span>{errorText(error)}</span>
+      {retry && (
+        <button type="button" className="link-button" onClick={retry}>
+          Try again
+        </button>
+      )}
     </div>
   );
 }

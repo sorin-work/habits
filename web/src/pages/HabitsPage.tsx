@@ -19,7 +19,7 @@ export function HabitsPage() {
       {query.isPending ? (
         <div className="page-loading">Loading…</div>
       ) : query.isError ? (
-        <ErrorMessage error={query.error} />
+        <ErrorMessage error={query.error} retry={() => void query.refetch()} />
       ) : query.data.length === 0 ? (
           <p className="muted">No habits yet.</p>
       ) : (

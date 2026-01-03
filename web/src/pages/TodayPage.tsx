@@ -25,7 +25,7 @@ export function TodayPage() {
   });
 
   if (query.isPending) return <div className="page-loading">Loading…</div>;
-  if (query.isError) return <ErrorMessage error={query.error} />;
+  if (query.isError) return <ErrorMessage error={query.error} retry={() => void query.refetch()} />;
 
   const data = query.data;
   const busy = save.isPending || clear.isPending;
