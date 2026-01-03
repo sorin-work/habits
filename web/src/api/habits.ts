@@ -6,6 +6,8 @@ import type {
   TodayResponse,
 } from './types';
 
+export const listHabits = () => api.get<Habit[]>('/api/habits');
+
 export const createHabit = (input: HabitInput) => api.post<Habit>('/api/habits', input);
 
 export const fetchToday = () => api.get<TodayResponse>('/api/today');

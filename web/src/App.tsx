@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router';
 import { GuestOnly, RequireAuth } from './auth/guards';
 import { Layout } from './components/Layout';
+import { HabitsPage } from './pages/HabitsPage';
 import { LoginPage } from './pages/LoginPage';
 import { NewHabitPage } from './pages/NewHabitPage';
 import { NotFoundPage } from './pages/NotFoundPage';
@@ -34,6 +35,7 @@ export function App() {
         }
       >
         <Route index element={<TodayPage />} />
+        <Route path="habits" element={<HabitsPage />} />
         <Route path="habits/new" element={<NewHabitPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
