@@ -15,6 +15,8 @@ export const createHabit = (input: HabitInput) => api.post<Habit>('/api/habits',
 
 export const updateHabit = (id: number, input: HabitInput) => api.put<Habit>(`/api/habits/${id}`, input);
 
+export const deleteHabit = (id: number) => api.delete(`/api/habits/${id}`);
+
 export const fetchToday = () => api.get<TodayResponse>('/api/today');
 
 export const saveCheckIn = (habitId: number, date: string, input: { value?: number; note?: string | null }) =>

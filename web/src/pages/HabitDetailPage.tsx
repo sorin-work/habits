@@ -1,6 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import { Link, useParams } from 'react-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link, useNavigate, useParams } from 'react-router';
 import {
+  deleteHabit,
   fetchHabit,
 } from '../api/habits';
 import { ErrorMessage } from '../components/ErrorMessage';
@@ -9,8 +10,19 @@ import { describeSchedule, describeTarget, streakLabel } from '../lib/schedule';
 
 export function HabitDetailPage() {
   const id = Number(useParams().id);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const detail = useQuery({ queryKey: ['habit', id], queryFn: () => fetchHabit(id) });
+  const remove = useMutation({
+    mutationFn: () => deleteHabit(id),
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ['habit', id] });
+      void queryClient.invalidateQueries({ queryKey: ['habits'] });
+      void queryClient.invalidateQueries({ queryKey: ['today'] });
+      navigate('/habits');
+    },
+  });
 
   if (detail.isPending) return <div className="page-loading">Loading…</div>;
   if (detail.isError) return <ErrorMessage error={detail.error} retry={() => void detail.refetch()} />;
@@ -34,8 +46,17 @@ export function HabitDetailPage() {
           <Link to={`/habits/${habit.id}/edit`} className="button">
             Edit
           </Link>
+          <button
+            type="button"
+            className="button danger"
+            disabled={remove.isPending}
+            onClick={() => remove.mutate()}
+          >
+            Delete
+          </button>
         </div>
       </div>
+      {remove.error && <ErrorMessage error={remove.error} />}
 
       <div className="stat-cards">
         <div className="stat-card">
