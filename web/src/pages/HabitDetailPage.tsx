@@ -50,7 +50,11 @@ export function HabitDetailPage() {
             type="button"
             className="button danger"
             disabled={remove.isPending}
-            onClick={() => remove.mutate()}
+            onClick={() => {
+              if (window.confirm(`Delete "${habit.name}" and all of its check-ins? This can't be undone.`)) {
+                remove.mutate();
+              }
+            }}
           >
             Delete
           </button>
