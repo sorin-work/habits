@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import {
   fetchHabit,
 } from '../api/habits';
@@ -31,6 +31,9 @@ export function HabitDetailPage() {
           </p>
         </div>
         <div className="header-actions">
+          <Link to={`/habits/${habit.id}/edit`} className="button">
+            Edit
+          </Link>
         </div>
       </div>
 
