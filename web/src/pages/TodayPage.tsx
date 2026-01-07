@@ -4,6 +4,7 @@ import { deleteCheckIn, fetchToday, saveCheckIn } from '../api/habits';
 import type { TodayHabit } from '../api/types';
 import { CheckInControl } from '../components/CheckInControl';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { NoteEditor } from '../components/NoteEditor';
 import { describeSchedule, streakLabel } from '../lib/schedule';
 
 type SaveInput = { habitId: number; date: string; value?: number; note?: string | null };
@@ -59,6 +60,14 @@ export function TodayPage() {
             onClear={() => clear.mutate({ habitId: habit.id, date: data.date })}
           />
         </div>
+        {item.value > 0 && (
+          <NoteEditor
+            key={`${habit.id}-${item.note ?? ''}`}
+            note={item.note}
+            disabled={busy}
+            onSave={(note) => save.mutateAsync({ habitId: habit.id, date: data.date, value: item.value, note })}
+          />
+        )}
       </li>
     );
   };

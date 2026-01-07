@@ -525,6 +525,22 @@ textarea:focus {
   color: var(--habit-color);
 }
 
+.note {
+  margin: 0.4rem 0 0 1.5rem;
+  font-size: 0.9rem;
+}
+
+.note-text {
+  margin: 0 0 0.2rem;
+  white-space: pre-wrap;
+}
+
+.note.editing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
 /* Stats */
 
 .stat-cards {
