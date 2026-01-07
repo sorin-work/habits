@@ -13,16 +13,17 @@ export function TodayPage() {
   const queryClient = useQueryClient();
   const query = useQuery({ queryKey: ['today'], queryFn: () => fetchToday() });
 
-  const refresh = () => {
+  const refresh = (habitId: number) => {
     void queryClient.invalidateQueries({ queryKey: ['today'] });
+    void queryClient.invalidateQueries({ queryKey: ['habit', habitId] });
   };
   const save = useMutation({
     mutationFn: (input: SaveInput) => saveCheckIn(input.habitId, input.date, { value: input.value, note: input.note }),
-    onSuccess: () => refresh(),
+    onSuccess: (_data, input) => refresh(input.habitId),
   });
   const clear = useMutation({
     mutationFn: (input: { habitId: number; date: string }) => deleteCheckIn(input.habitId, input.date),
-    onSuccess: () => refresh(),
+    onSuccess: (_data, input) => refresh(input.habitId),
   });
 
   if (query.isPending) return <div className="page-loading">Loading…</div>;
