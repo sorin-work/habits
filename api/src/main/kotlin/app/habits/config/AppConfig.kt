@@ -20,6 +20,7 @@ data class AppConfig(
     val database: DatabaseConfig,
     val jwt: JwtConfig,
     val corsAllowedOrigins: List<String>,
+    val seedDemo: Boolean,
     val bcryptCost: Int = 12,
 ) {
     companion object {
@@ -42,6 +43,7 @@ data class AppConfig(
                         .split(",")
                         .map { it.trim() }
                         .filter { it.isNotEmpty() },
+                seedDemo = env["SEED_DEMO"]?.trim()?.lowercase() in setOf("true", "1", "yes"),
             )
         }
 

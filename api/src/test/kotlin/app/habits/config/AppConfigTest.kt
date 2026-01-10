@@ -15,6 +15,7 @@ class AppConfigTest {
         assertEquals("jdbc:postgresql://localhost:5443/habits", config.database.url)
         assertEquals(Duration.ofDays(7), config.jwt.ttl)
         assertEquals(listOf("http://localhost:5173"), config.corsAllowedOrigins)
+        assertFalse(config.seedDemo)
     }
 
     @Test
@@ -25,11 +26,13 @@ class AppConfigTest {
                     "PORT" to "9000",
                     "JWT_TTL" to "12h",
                     "CORS_ALLOWED_ORIGINS" to "http://localhost:5183, https://habits.example.com",
+                    "SEED_DEMO" to "TRUE",
                 ),
             )
         assertEquals(9000, config.port)
         assertEquals(Duration.ofHours(12), config.jwt.ttl)
         assertEquals(listOf("http://localhost:5183", "https://habits.example.com"), config.corsAllowedOrigins)
+        assertTrue(config.seedDemo)
     }
 
     @Test

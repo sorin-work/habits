@@ -12,6 +12,7 @@ import app.habits.habits.HabitRepository
 import app.habits.habits.HabitService
 import app.habits.habits.habitRoutes
 import app.habits.health.healthRoutes
+import app.habits.seed.DemoSeeder
 import app.habits.stats.StatsService
 import app.habits.today.TodayService
 import app.habits.today.todayRoutes
@@ -30,6 +31,7 @@ import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.routing.routing
+import kotlinx.coroutines.runBlocking
 import org.slf4j.event.Level
 import java.net.URI
 import java.time.Clock
@@ -83,5 +85,9 @@ fun Application.module(
         userRoutes(userService)
         habitRoutes(userService, habitService, statsService, clock)
         todayRoutes(userService, todayService)
+    }
+
+    if (config.seedDemo) {
+        runBlocking { DemoSeeder(userRepository, habitRepository, checkInRepository, hasher, clock).seed() }
     }
 }

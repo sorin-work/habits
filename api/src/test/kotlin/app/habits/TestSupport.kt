@@ -38,7 +38,7 @@ import kotlin.test.assertEquals
 val TEST_NOW: Instant = Instant.parse("2026-03-18T10:00:00Z")
 val testClock: Clock = Clock.fixed(TEST_NOW, ZoneOffset.UTC)
 
-fun testConfig() =
+fun testConfig(seedDemo: Boolean = false) =
     AppConfig(
         port = 0,
         database =
@@ -51,6 +51,7 @@ fun testConfig() =
             ),
         jwt = JwtConfig(secret = "test-secret-that-is-long-enough-for-hmac-256"),
         corsAllowedOrigins = listOf("http://localhost:5173"),
+        seedDemo = seedDemo,
         bcryptCost = 4,
     )
 
@@ -146,10 +147,11 @@ fun dailyHabit(
 
 fun apiTest(
     clock: Clock = testClock,
+    seedDemo: Boolean = false,
     block: suspend Api.(ApplicationTestBuilder) -> Unit,
 ) = testApplication {
     TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
-    application { module(testConfig(), clock) }
+    application { module(testConfig(seedDemo), clock) }
     val client = createClient { install(ContentNegotiation) { json(AppJson) } }
     Api(client).block(this)
 }

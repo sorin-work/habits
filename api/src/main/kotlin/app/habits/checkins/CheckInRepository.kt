@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.between
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
@@ -88,6 +89,21 @@ class CheckInRepository(
                 .orderBy(CheckIns.day to SortOrder.ASC)
                 .map { it.toCheckIn() }
         }
+
+    /** Inserts many check-ins in one go. Used by the demo seed. */
+    suspend fun insertAll(
+        entries: List<CheckIn>,
+        now: Instant,
+    ) = db.query {
+        CheckIns.batchInsert(entries, shouldReturnGeneratedValues = false) { entry ->
+            this[CheckIns.habitId] = entry.habitId
+            this[CheckIns.day] = entry.day
+            this[CheckIns.value] = entry.value
+            this[CheckIns.note] = entry.note
+            this[CheckIns.createdAt] = now
+            this[CheckIns.updatedAt] = now
+        }
+    }
 }
 
 private fun ResultRow.toCheckIn() =
