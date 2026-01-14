@@ -36,6 +36,10 @@ class DemoSeeder(
     private val log = LoggerFactory.getLogger(DemoSeeder::class.java)
 
     suspend fun seed() {
+        if (users.findByEmail(DEMO_EMAIL) != null) {
+            log.info("Demo user already exists, skipping seed")
+            return
+        }
         val zone = ZoneId.of("Europe/Berlin")
         val now = clock.instant()
         val today = LocalDate.now(clock)
