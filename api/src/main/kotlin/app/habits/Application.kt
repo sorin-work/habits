@@ -21,6 +21,7 @@ import app.habits.users.UserService
 import app.habits.users.authRoutes
 import app.habits.users.userRoutes
 import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpMethod
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStopped
@@ -75,6 +76,8 @@ fun Application.module(
         }
         allowHeader(HttpHeaders.Authorization)
         allowHeader(HttpHeaders.ContentType)
+        allowMethod(HttpMethod.Put)
+        allowMethod(HttpMethod.Delete)
     }
     configureErrorHandling()
     configureSecurity(jwt)

@@ -6,6 +6,9 @@ import app.habits.dailyHabit
 import app.habits.int
 import app.habits.obj
 import app.habits.str
+import io.ktor.client.request.header
+import io.ktor.client.request.options
+import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
@@ -97,5 +100,17 @@ class HabitRoutesTest {
             assertEquals(HttpStatusCode.NoContent, delete("/api/habits/$id", token = token).status)
             assertEquals(HttpStatusCode.NotFound, get("/api/habits/$id", token).status)
             assertEquals(HttpStatusCode.NotFound, get("/api/habits/not-a-number", token).status)
+        }
+
+    @Test
+    fun `the web dev server may send put requests`() =
+        apiTest {
+            val response =
+                client.options("/api/habits/1") {
+                    header(HttpHeaders.Origin, "http://localhost:5173")
+                    header(HttpHeaders.AccessControlRequestMethod, "PUT")
+                }
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertTrue(response.headers[HttpHeaders.AccessControlAllowMethods].orEmpty().contains("PUT"))
         }
 }
