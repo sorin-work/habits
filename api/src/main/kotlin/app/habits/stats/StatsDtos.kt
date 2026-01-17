@@ -1,7 +1,9 @@
 package app.habits.stats
 
+import app.habits.common.LocalDateSerializer
 import app.habits.habits.HabitResponse
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 data class StreakResponse(
@@ -29,4 +31,21 @@ data class HabitSummary(
 data class HabitDetailResponse(
     val habit: HabitResponse,
     val summary: HabitSummary,
+)
+
+@Serializable
+data class HeatmapDayResponse(
+    @Serializable(with = LocalDateSerializer::class) val date: LocalDate,
+    val value: Int,
+    val level: Int,
+    val scheduled: Boolean,
+    val completed: Boolean,
+)
+
+@Serializable
+data class HeatmapResponse(
+    @Serializable(with = LocalDateSerializer::class) val from: LocalDate,
+    @Serializable(with = LocalDateSerializer::class) val to: LocalDate,
+    val goal: Int,
+    val days: List<HeatmapDayResponse>,
 )

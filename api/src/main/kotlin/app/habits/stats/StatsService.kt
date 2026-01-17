@@ -2,6 +2,7 @@ package app.habits.stats
 
 import app.habits.checkins.CheckIn
 import app.habits.checkins.CheckInRepository
+import app.habits.common.DateRange
 import app.habits.common.today
 import app.habits.habits.Habit
 import app.habits.habits.HabitService
@@ -24,6 +25,22 @@ class StatsService(
         val habit = habitService.get(user, id)
         val history = checkIns.all(habit.id)
         return HabitDetailResponse(habit.toResponse(), summary(habit, history, user))
+    }
+
+    suspend fun heatmap(
+        user: User,
+        id: Long,
+        range: DateRange,
+    ): HeatmapResponse {
+        val habit = habitService.get(user, id)
+        val values = checkIns.list(habit.id, range).associate { it.day to it.value }
+        val days = Heatmap.build(habit, values, range.from, range.to)
+        return HeatmapResponse(
+            from = range.from,
+            to = range.to,
+            goal = habit.dailyGoal,
+            days = days.map { HeatmapDayResponse(it.date, it.value, it.level, it.scheduled, it.completed) },
+        )
     }
 
     fun summary(

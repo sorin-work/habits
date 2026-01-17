@@ -95,6 +95,12 @@ fun Route.habitRoutes(
                     service.undoCheckIn(user, call.longPath("id"), call.datePath("date"))
                     call.respond(HttpStatusCode.NoContent)
                 }
+                get("/heatmap") {
+                    val user = users.get(call.userId)
+                    val today = clock.today(user.timeZone)
+                    val range = call.dateRange(today.minusDays(364), today)
+                    call.respond(stats.heatmap(user, call.longPath("id"), range))
+                }
             }
         }
     }
