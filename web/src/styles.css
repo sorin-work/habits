@@ -568,6 +568,63 @@ textarea:focus {
   font-weight: 700;
 }
 
+.heatmap {
+  display: flex;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+.heatmap-weekdays {
+  display: grid;
+  grid-template-rows: 1rem repeat(7, 12px);
+  gap: 3px;
+}
+
+.heatmap-weekdays span {
+  line-height: 12px;
+}
+
+.heatmap-scroll {
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.heatmap-grid {
+  display: flex;
+  gap: 3px;
+}
+
+.heatmap-column {
+  display: grid;
+  grid-template-rows: 1rem repeat(7, 12px);
+  gap: 3px;
+}
+
+.heatmap-month {
+  white-space: nowrap;
+  width: 12px;
+  overflow: visible;
+}
+
+.heatmap-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  background: var(--empty-cell);
+}
+
+.heatmap-cell[data-level='1'],
+.heatmap-cell[data-level='2'],
+.heatmap-cell[data-level='3'],
+.heatmap-cell[data-level='4'] {
+  background: var(--habit-color);
+}
+
+.heatmap-cell.empty {
+  background: transparent;
+}
+
 /* Auth */
 
 .auth-page {

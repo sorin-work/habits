@@ -3,8 +3,10 @@ import { Link, useNavigate, useParams } from 'react-router';
 import {
   deleteHabit,
   fetchHabit,
+  fetchHeatmap,
 } from '../api/habits';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { HabitHeatmap } from '../components/HabitHeatmap';
 import { formatLong } from '../lib/dates';
 import { describeSchedule, describeTarget, streakLabel } from '../lib/schedule';
 
@@ -14,6 +16,7 @@ export function HabitDetailPage() {
   const queryClient = useQueryClient();
 
   const detail = useQuery({ queryKey: ['habit', id], queryFn: () => fetchHabit(id) });
+  const heatmap = useQuery({ queryKey: ['habit', id, 'heatmap'], queryFn: () => fetchHeatmap(id) });
   const remove = useMutation({
     mutationFn: () => deleteHabit(id),
     onSuccess: () => {
@@ -86,6 +89,16 @@ export function HabitDetailPage() {
         )}
       </div>
 
+      <section className="card">
+        <h2>History</h2>
+        {heatmap.isPending ? (
+          <div className="page-loading">Loading…</div>
+        ) : heatmap.isError ? (
+          <ErrorMessage error={heatmap.error} />
+        ) : (
+          <HabitHeatmap heatmap={heatmap.data} color={habit.color} />
+        )}
+      </section>
     </div>
   );
 }

@@ -83,6 +83,21 @@ export interface TodayResponse {
   completedCount: number;
 }
 
+export interface HeatmapDay {
+  date: string;
+  value: number;
+  level: number;
+  scheduled: boolean;
+  completed: boolean;
+}
+
+export interface Heatmap {
+  from: string;
+  to: string;
+  goal: number;
+  days: HeatmapDay[];
+}
+
 export interface User {
   id: number;
   email: string;

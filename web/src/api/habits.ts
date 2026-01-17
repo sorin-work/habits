@@ -4,6 +4,7 @@ import type {
   Habit,
   HabitDetail,
   HabitInput,
+  Heatmap,
   TodayResponse,
 } from './types';
 
@@ -23,3 +24,5 @@ export const saveCheckIn = (habitId: number, date: string, input: { value?: numb
   api.put<CheckIn>(`/api/habits/${habitId}/checkins/${date}`, input);
 
 export const deleteCheckIn = (habitId: number, date: string) => api.delete(`/api/habits/${habitId}/checkins/${date}`);
+
+export const fetchHeatmap = (habitId: number) => api.get<Heatmap>(`/api/habits/${habitId}/heatmap`);
