@@ -35,4 +35,24 @@ class HeatmapTest {
         assertEquals(4, Heatmap.level(12, 8))
         assertEquals(4, Heatmap.level(1, 1))
     }
+
+    @Test
+    fun `builds one entry per day with schedule and completion`() {
+        val days =
+            Heatmap.build(
+                habit(target = 8, schedule = Schedule.Weekdays(setOf(MONDAY))),
+                mapOf(LocalDate.of(2026, 3, 16) to 8, LocalDate.of(2026, 3, 17) to 3),
+                LocalDate.of(2026, 3, 8),
+                LocalDate.of(2026, 3, 17),
+            )
+        assertEquals(10, days.size)
+        // Monday the 9th is before the start date.
+        assertEquals(false, days.first { it.date == LocalDate.of(2026, 3, 9) }.scheduled)
+        val monday = days.first { it.date == LocalDate.of(2026, 3, 16) }
+        assertEquals(true, monday.scheduled)
+        assertEquals(true, monday.completed)
+        val tuesday = days.last()
+        assertEquals(false, tuesday.completed)
+        assertEquals(2, tuesday.level)
+    }
 }

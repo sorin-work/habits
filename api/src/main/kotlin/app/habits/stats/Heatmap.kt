@@ -30,7 +30,7 @@ object Heatmap {
         from: LocalDate,
         to: LocalDate,
     ): List<HeatmapDay> =
-        daysBetween(from, to.minusDays(1))
+        daysBetween(from, to)
             .map { day ->
                 val value = values[day] ?: 0
                 HeatmapDay(
