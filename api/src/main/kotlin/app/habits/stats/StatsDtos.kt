@@ -34,6 +34,32 @@ data class HabitDetailResponse(
 )
 
 @Serializable
+data class CompletionResponse(
+    val expected: Int,
+    val completed: Int,
+    val rate: Double?,
+)
+
+fun Completion.toResponse() = CompletionResponse(expected, completed, rate)
+
+@Serializable
+data class BucketResponse(
+    @Serializable(with = LocalDateSerializer::class) val start: LocalDate,
+    @Serializable(with = LocalDateSerializer::class) val end: LocalDate,
+    val expected: Int,
+    val completed: Int,
+    val rate: Double?,
+)
+
+fun Bucket.toResponse() = BucketResponse(start, end, completion.expected, completion.completed, completion.rate)
+
+@Serializable
+data class HabitStatsResponse(
+    val period: String,
+    val buckets: List<BucketResponse>,
+)
+
+@Serializable
 data class HeatmapDayResponse(
     @Serializable(with = LocalDateSerializer::class) val date: LocalDate,
     val value: Int,

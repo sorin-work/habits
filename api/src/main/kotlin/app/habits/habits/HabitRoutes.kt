@@ -3,13 +3,17 @@ package app.habits.habits
 import app.habits.auth.AUTH_JWT
 import app.habits.auth.userId
 import app.habits.checkins.CheckInResponse
+import app.habits.common.ApiException
 import app.habits.common.datePath
 import app.habits.common.dateRange
+import app.habits.common.intQuery
 import app.habits.common.longPath
 import app.habits.common.today
+import app.habits.stats.StatsPeriod
 import app.habits.stats.StatsService
 import app.habits.users.UserService
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
 import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
@@ -95,6 +99,13 @@ fun Route.habitRoutes(
                     service.undoCheckIn(user, call.longPath("id"), call.datePath("date"))
                     call.respond(HttpStatusCode.NoContent)
                 }
+
+                get("/stats") {
+                    val user = users.get(call.userId)
+                    val period = call.statsPeriod()
+                    val count = call.intQuery("count", default = 12, range = 1..104)
+                    call.respond(stats.stats(user, call.longPath("id"), period, count))
+                }
                 get("/heatmap") {
                     val user = users.get(call.userId)
                     val today = clock.today(user.timeZone)
@@ -105,3 +116,10 @@ fun Route.habitRoutes(
         }
     }
 }
+
+private fun ApplicationCall.statsPeriod(): StatsPeriod =
+    when (request.queryParameters["period"] ?: "week") {
+        "week" -> StatsPeriod.WEEK
+        "month" -> StatsPeriod.MONTH
+        else -> throw ApiException(HttpStatusCode.BadRequest, "invalid_parameter", "'period' must be week or month")
+    }

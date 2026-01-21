@@ -27,6 +27,27 @@ class StatsService(
         return HabitDetailResponse(habit.toResponse(), summary(habit, history, user))
     }
 
+    suspend fun stats(
+        user: User,
+        id: Long,
+        period: StatsPeriod,
+        count: Int,
+    ): HabitStatsResponse {
+        val habit = habitService.get(user, id)
+        val completed = completedDays(habit, checkIns.all(habit.id))
+        val buckets =
+            CompletionStats.buckets(
+                habit.schedule,
+                habit.startDate,
+                completed,
+                period,
+                count,
+                clock.today(user.timeZone),
+                DayOfWeek.MONDAY,
+            )
+        return HabitStatsResponse(period.name.lowercase(), buckets.map { it.toResponse() })
+    }
+
     suspend fun heatmap(
         user: User,
         id: Long,

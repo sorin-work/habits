@@ -14,6 +14,23 @@ fun ApplicationCall.datePath(name: String): LocalDate =
 
 fun ApplicationCall.dateQuery(name: String): LocalDate? = parseDate(name, request.queryParameters[name])
 
+fun ApplicationCall.intQuery(
+    name: String,
+    default: Int,
+    range: IntRange,
+): Int {
+    val raw = request.queryParameters[name] ?: return default
+    val value = raw.toIntOrNull()
+    if (value == null || value !in range) {
+        throw ApiException(
+            HttpStatusCode.BadRequest,
+            "invalid_parameter",
+            "'$name' must be a number between ${range.first} and ${range.last}",
+        )
+    }
+    return value
+}
+
 private fun parseDate(
     name: String,
     raw: String?,
