@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import {
   deleteHabit,
@@ -6,6 +7,7 @@ import {
   fetchHabitStats,
   fetchHeatmap,
 } from '../api/habits';
+import type { StatsPeriod } from '../api/types';
 import { CompletionChart } from '../components/CompletionChart';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { HabitHeatmap } from '../components/HabitHeatmap';
@@ -16,10 +18,11 @@ export function HabitDetailPage() {
   const id = Number(useParams().id);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [period, setPeriod] = useState<StatsPeriod>('week');
 
   const detail = useQuery({ queryKey: ['habit', id], queryFn: () => fetchHabit(id) });
   const heatmap = useQuery({ queryKey: ['habit', id, 'heatmap'], queryFn: () => fetchHeatmap(id) });
-  const stats = useQuery({ queryKey: ['habit', id, 'stats'], queryFn: () => fetchHabitStats(id, 'week') });
+  const stats = useQuery({ queryKey: ['habit', id, 'stats', period], queryFn: () => fetchHabitStats(id, period) });
   const remove = useMutation({
     mutationFn: () => deleteHabit(id),
     onSuccess: () => {
@@ -104,13 +107,22 @@ export function HabitDetailPage() {
       </section>
 
       <section className="card">
-        <h2>Completion</h2>
+        <div className="card-header">
+          <h2>Completion</h2>
+          <div className="segmented small" role="group" aria-label="Period">
+            {(['week', 'month'] as const).map((p) => (
+              <button key={p} type="button" aria-pressed={period === p} onClick={() => setPeriod(p)}>
+                {p === 'week' ? 'Weekly' : 'Monthly'}
+              </button>
+            ))}
+          </div>
+        </div>
         {stats.isPending ? (
           <div className="page-loading">Loading…</div>
         ) : stats.isError ? (
           <ErrorMessage error={stats.error} />
         ) : (
-          <CompletionChart buckets={stats.data.buckets} period="week" color={habit.color} />
+          <CompletionChart buckets={stats.data.buckets} period={period} color={habit.color} />
         )}
       </section>
     </div>

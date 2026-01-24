@@ -351,6 +351,11 @@ textarea:focus {
   font-weight: 500;
 }
 
+.segmented.small button {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.7rem;
+}
+
 .segmented label + label,
 .segmented button + button {
   border-left: 1px solid var(--border);
