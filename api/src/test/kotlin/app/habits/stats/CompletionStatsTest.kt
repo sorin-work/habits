@@ -31,6 +31,14 @@ class CompletionStatsTest {
     }
 
     @Test
+    fun `today only counts once it is done`() {
+        val open = CompletionStats.completion(Schedule.Daily, start, march(16, 17), march(16).first(), today, today)
+        assertEquals(Completion(2, 2), open)
+        val done = CompletionStats.completion(Schedule.Daily, start, march(16, 17, 18), march(16).first(), today, today)
+        assertEquals(Completion(3, 3), done)
+    }
+
+    @Test
     fun `weekday habits only expect their days`() {
         val schedule = Schedule.Weekdays(setOf(MONDAY, TUESDAY))
         val completion =

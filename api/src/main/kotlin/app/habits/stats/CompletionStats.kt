@@ -48,7 +48,8 @@ object CompletionStats {
         val first = latest(from, startDate)
         val last = to
         if (last.isBefore(first)) return Completion.NONE
-        val lastCounted = last
+        val includeToday = !today.isAfter(last) && today in completedDays
+        val lastCounted = if (includeToday || last.isBefore(today)) last else last.minusDays(1)
 
         return when (schedule) {
             is Schedule.TimesPerWeek -> {
