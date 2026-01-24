@@ -23,6 +23,7 @@ data class WeekProgress(
 @Serializable
 data class HabitSummary(
     val streak: StreakResponse,
+    val last30Days: CompletionResponse,
     val totalCheckIns: Int,
     val thisWeek: WeekProgress? = null,
 )

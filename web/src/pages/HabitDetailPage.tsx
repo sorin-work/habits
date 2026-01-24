@@ -12,6 +12,7 @@ import { CompletionChart } from '../components/CompletionChart';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { HabitHeatmap } from '../components/HabitHeatmap';
 import { formatLong } from '../lib/dates';
+import { percent } from '../lib/format';
 import { describeSchedule, describeTarget, streakLabel } from '../lib/schedule';
 
 export function HabitDetailPage() {
@@ -79,6 +80,10 @@ export function HabitDetailPage() {
         <div className="stat-card">
           <span className="stat-label">Best streak</span>
           <span className="stat-value">{streakLabel(summary.streak.best, summary.streak.unit)}</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-label">Last 30 days</span>
+          <span className="stat-value">{percent(summary.last30Days.rate)}</span>
         </div>
         {summary.thisWeek ? (
           <div className="stat-card">

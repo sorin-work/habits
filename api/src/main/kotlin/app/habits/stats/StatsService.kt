@@ -74,6 +74,7 @@ class StatsService(
         val streaks = StreakCalculator.calculate(habit.schedule, habit.startDate, completed, today, DayOfWeek.MONDAY)
         return HabitSummary(
             streak = streaks.toResponse(),
+            last30Days = last30(habit, completed, today).toResponse(),
             totalCheckIns = history.size,
             thisWeek = weekProgress(habit, completed, today, DayOfWeek.MONDAY),
         )
@@ -84,6 +85,20 @@ class StatsService(
             habit: Habit,
             history: List<CheckIn>,
         ): Set<LocalDate> = history.filter { habit.isComplete(it.value) }.map { it.day }.toSet()
+
+        fun last30(
+            habit: Habit,
+            completed: Set<LocalDate>,
+            today: LocalDate,
+        ): Completion =
+            CompletionStats.completion(
+                habit.schedule,
+                habit.startDate,
+                completed,
+                today.minusDays(29),
+                today,
+                today,
+            )
 
         fun weekProgress(
             habit: Habit,

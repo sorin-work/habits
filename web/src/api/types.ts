@@ -49,6 +49,7 @@ export interface Completion {
 
 export interface HabitSummary {
   streak: Streak;
+  last30Days: Completion;
   totalCheckIns: number;
   thisWeek: WeekProgress | null;
 }
