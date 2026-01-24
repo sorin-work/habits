@@ -83,6 +83,18 @@ export interface TodayResponse {
   completedCount: number;
 }
 
+export type StatsPeriod = 'week' | 'month';
+
+export interface Bucket extends Completion {
+  start: string;
+  end: string;
+}
+
+export interface HabitStats {
+  period: StatsPeriod;
+  buckets: Bucket[];
+}
+
 export interface HeatmapDay {
   date: string;
   value: number;

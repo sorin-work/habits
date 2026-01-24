@@ -3,8 +3,10 @@ import { Link, useNavigate, useParams } from 'react-router';
 import {
   deleteHabit,
   fetchHabit,
+  fetchHabitStats,
   fetchHeatmap,
 } from '../api/habits';
+import { CompletionChart } from '../components/CompletionChart';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { HabitHeatmap } from '../components/HabitHeatmap';
 import { formatLong } from '../lib/dates';
@@ -17,6 +19,7 @@ export function HabitDetailPage() {
 
   const detail = useQuery({ queryKey: ['habit', id], queryFn: () => fetchHabit(id) });
   const heatmap = useQuery({ queryKey: ['habit', id, 'heatmap'], queryFn: () => fetchHeatmap(id) });
+  const stats = useQuery({ queryKey: ['habit', id, 'stats'], queryFn: () => fetchHabitStats(id, 'week') });
   const remove = useMutation({
     mutationFn: () => deleteHabit(id),
     onSuccess: () => {
@@ -97,6 +100,17 @@ export function HabitDetailPage() {
           <ErrorMessage error={heatmap.error} />
         ) : (
           <HabitHeatmap heatmap={heatmap.data} color={habit.color} />
+        )}
+      </section>
+
+      <section className="card">
+        <h2>Completion</h2>
+        {stats.isPending ? (
+          <div className="page-loading">Loading…</div>
+        ) : stats.isError ? (
+          <ErrorMessage error={stats.error} />
+        ) : (
+          <CompletionChart buckets={stats.data.buckets} period="week" color={habit.color} />
         )}
       </section>
     </div>

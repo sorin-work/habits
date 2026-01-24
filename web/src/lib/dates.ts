@@ -21,9 +21,11 @@ export function isoWeekday(iso: string): number {
 }
 
 const fullFormat = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' });
+const shortFormat = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' });
 const monthFormat = new Intl.DateTimeFormat('en', { month: 'short' });
 
 export const formatLong = (iso: string) => fullFormat.format(parseDate(iso));
+export const formatShort = (iso: string) => shortFormat.format(parseDate(iso));
 export const formatMonth = (iso: string) => monthFormat.format(parseDate(iso));
 
 /** "Today", "Yesterday" or the full date. */
