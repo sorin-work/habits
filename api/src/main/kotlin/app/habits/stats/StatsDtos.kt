@@ -76,3 +76,19 @@ data class HeatmapResponse(
     val goal: Int,
     val days: List<HeatmapDayResponse>,
 )
+
+@Serializable
+data class OverviewHabit(
+    val id: Long,
+    val name: String,
+    val color: String,
+    val streak: StreakResponse,
+    val last30Days: CompletionResponse,
+)
+
+@Serializable
+data class OverviewResponse(
+    val period: String,
+    val buckets: List<BucketResponse>,
+    val habits: List<OverviewHabit>,
+)

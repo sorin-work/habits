@@ -114,6 +114,13 @@ fun Route.habitRoutes(
                 }
             }
         }
+
+        get("/api/stats/overview") {
+            val user = users.get(call.userId)
+            val period = call.statsPeriod()
+            val count = call.intQuery("count", default = 12, range = 1..104)
+            call.respond(stats.overview(user, period, count))
+        }
     }
 }
 

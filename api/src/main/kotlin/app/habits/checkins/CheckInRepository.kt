@@ -8,6 +8,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SortOrder
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.between
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.inList
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.deleteWhere
@@ -102,6 +103,22 @@ class CheckInRepository(
             this[CheckIns.note] = entry.note
             this[CheckIns.createdAt] = now
             this[CheckIns.updatedAt] = now
+        }
+    }
+
+    /** Every check-in of several habits up to [upTo], grouped by habit. */
+    suspend fun forHabits(
+        habitIds: Collection<Long>,
+        upTo: LocalDate,
+    ): Map<Long, List<CheckIn>> {
+        if (habitIds.isEmpty()) return emptyMap()
+        return db.query {
+            CheckIns
+                .selectAll()
+                .where { (CheckIns.habitId inList habitIds) and (CheckIns.day lessEq upTo) }
+                .orderBy(CheckIns.day to SortOrder.ASC)
+                .map { it.toCheckIn() }
+                .groupBy { it.habitId }
         }
     }
 }

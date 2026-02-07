@@ -61,7 +61,7 @@ fun Application.module(
     val checkInRepository = CheckInRepository(db)
     val userService = UserService(userRepository, hasher, jwt, clock)
     val habitService = HabitService(habitRepository, checkInRepository, clock)
-    val statsService = StatsService(habitService, checkInRepository, clock)
+    val statsService = StatsService(habitService, habitRepository, checkInRepository, clock)
     val todayService = TodayService(habitRepository, checkInRepository, clock)
 
     install(ContentNegotiation) { json(AppJson) }

@@ -5,6 +5,7 @@ import app.habits.checkins.CheckInRepository
 import app.habits.common.DateRange
 import app.habits.common.today
 import app.habits.habits.Habit
+import app.habits.habits.HabitRepository
 import app.habits.habits.HabitService
 import app.habits.habits.Schedule
 import app.habits.habits.toResponse
@@ -15,6 +16,7 @@ import java.time.LocalDate
 
 class StatsService(
     private val habitService: HabitService,
+    private val habits: HabitRepository,
     private val checkIns: CheckInRepository,
     private val clock: Clock,
 ) {
@@ -61,6 +63,51 @@ class StatsService(
             to = range.to,
             goal = habit.dailyGoal,
             days = days.map { HeatmapDayResponse(it.date, it.value, it.level, it.scheduled, it.completed) },
+        )
+    }
+
+    /** Completion across all active habits, plus each habit's streak and which weekdays go best. */
+    suspend fun overview(
+        user: User,
+        period: StatsPeriod,
+        count: Int,
+    ): OverviewResponse {
+        val today = clock.today(user.timeZone)
+        val active = habits.list(user.id)
+        val history = checkIns.forHabits(active.map { it.id }, today)
+        val ranges = CompletionStats.bucketRanges(period, count, today, DayOfWeek.MONDAY)
+        val totals = MutableList(ranges.size) { Completion.NONE }
+
+        val rows =
+            active.map { habit ->
+                val completed = completedDays(habit, history[habit.id].orEmpty())
+                ranges.forEachIndexed { index, (start, end) ->
+                    val completion =
+                        CompletionStats.completion(
+                            habit.schedule,
+                            habit.startDate,
+                            completed,
+                            start,
+                            end,
+                            today,
+                        )
+                    totals[index] = totals[index] + completion
+                }
+                val streaks =
+                    StreakCalculator.calculate(habit.schedule, habit.startDate, completed, today, DayOfWeek.MONDAY)
+                OverviewHabit(
+                    id = habit.id,
+                    name = habit.name,
+                    color = habit.color,
+                    streak = streaks.toResponse(),
+                    last30Days = last30(habit, completed, today).toResponse(),
+                )
+            }
+
+        return OverviewResponse(
+            period = period.name.lowercase(),
+            buckets = ranges.mapIndexed { index, (start, end) -> Bucket(start, end, totals[index]).toResponse() },
+            habits = rows,
         )
     }
 

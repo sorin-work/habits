@@ -78,4 +78,21 @@ class StatsRoutesTest {
             assertEquals(HttpStatusCode.BadRequest, get("/api/habits/$id/stats?period=year", token).status)
             assertEquals(HttpStatusCode.BadRequest, get("/api/habits/$id/stats?count=500", token).status)
         }
+
+    @Test
+    fun `overview combines active habits`() =
+        apiTest {
+            val token = register()
+            val read = createHabit(token, dailyHabit("Read", startDate = "2026-03-16"))
+            val water = createHabit(token, dailyHabit("Water", startDate = "2026-03-16"))
+            put("/api/habits/$read/checkins/2026-03-16", mapOf<String, Any>(), token)
+            put("/api/habits/$read/checkins/2026-03-17", mapOf<String, Any>(), token)
+            put("/api/habits/$water/checkins/2026-03-16", mapOf<String, Any>(), token)
+
+            val body = get("/api/stats/overview?period=week&count=2", token).obj()
+            val current = (body["buckets"] as JsonArray).last().jsonObject
+            assertEquals(3, current["completed"]!!.int)
+            val habits = body["habits"] as JsonArray
+            assertEquals(listOf("Read", "Water"), habits.map { it.jsonObject["name"]!!.str })
+        }
 }
