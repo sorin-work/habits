@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { fetchOverview } from '../api/habits';
 import type { StatsPeriod } from '../api/types';
 import { CompletionChart } from '../components/CompletionChart';
+import { EmptyState } from '../components/EmptyState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { percent } from '../lib/format';
 import { streakLabel } from '../lib/schedule';
@@ -16,6 +17,19 @@ export function StatsPage() {
   if (query.isError) return <ErrorMessage error={query.error} retry={() => void query.refetch()} />;
 
   const data = query.data;
+  if (data.habits.length === 0) {
+    return (
+      <div className="page">
+        <h1>Stats</h1>
+        <EmptyState title="Nothing to show yet">
+          <p>Stats appear once you have a habit and a few check-ins.</p>
+          <Link to="/habits/new" className="button primary">
+            Add a habit
+          </Link>
+        </EmptyState>
+      </div>
+    );
+  }
 
   const current = data.buckets[data.buckets.length - 1];
 
