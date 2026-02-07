@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthContext';
 const links = [
   { to: '/', label: 'Today', end: true },
   { to: '/habits', label: 'Habits', end: false },
+  { to: '/stats', label: 'Stats', end: false },
 ];
 
 export function Layout() {

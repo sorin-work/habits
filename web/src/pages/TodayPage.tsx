@@ -16,6 +16,7 @@ export function TodayPage() {
   const refresh = (habitId: number) => {
     void queryClient.invalidateQueries({ queryKey: ['today'] });
     void queryClient.invalidateQueries({ queryKey: ['habit', habitId] });
+    void queryClient.invalidateQueries({ queryKey: ['overview'] });
   };
   const save = useMutation({
     mutationFn: (input: SaveInput) => saveCheckIn(input.habitId, input.date, { value: input.value, note: input.note }),

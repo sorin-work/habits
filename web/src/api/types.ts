@@ -111,6 +111,12 @@ export interface Heatmap {
   days: HeatmapDay[];
 }
 
+export interface Overview {
+  period: StatsPeriod;
+  buckets: Bucket[];
+  habits: { id: number; name: string; color: string; streak: Streak; last30Days: Completion }[];
+}
+
 export interface User {
   id: number;
   email: string;

@@ -6,6 +6,7 @@ import type {
   HabitInput,
   HabitStats,
   Heatmap,
+  Overview,
   StatsPeriod,
   TodayResponse,
 } from './types';
@@ -31,3 +32,6 @@ export const fetchHeatmap = (habitId: number) => api.get<Heatmap>(`/api/habits/$
 
 export const fetchHabitStats = (habitId: number, period: StatsPeriod, count = 12) =>
   api.get<HabitStats>(`/api/habits/${habitId}/stats?period=${period}&count=${count}`);
+
+export const fetchOverview = (period: StatsPeriod, count = 12) =>
+  api.get<Overview>(`/api/stats/overview?period=${period}&count=${count}`);

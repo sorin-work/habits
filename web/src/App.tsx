@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage';
 import { NewHabitPage } from './pages/NewHabitPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { SignupPage } from './pages/SignupPage';
+import { StatsPage } from './pages/StatsPage';
 import { TodayPage } from './pages/TodayPage';
 
 export function App() {
@@ -41,6 +42,7 @@ export function App() {
         <Route path="habits/new" element={<NewHabitPage />} />
         <Route path="habits/:id" element={<HabitDetailPage />} />
         <Route path="habits/:id/edit" element={<EditHabitPage />} />
+        <Route path="stats" element={<StatsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
