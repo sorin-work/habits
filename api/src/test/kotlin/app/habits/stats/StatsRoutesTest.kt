@@ -94,5 +94,9 @@ class StatsRoutesTest {
             assertEquals(3, current["completed"]!!.int)
             val habits = body["habits"] as JsonArray
             assertEquals(listOf("Read", "Water"), habits.map { it.jsonObject["name"]!!.str })
+            val weekdays = body["weekdays"] as JsonArray
+            assertEquals(7, weekdays.size)
+            // Monday the 16th: both habits done.
+            assertEquals(2, weekdays.first().jsonObject["completed"]!!.int)
         }
 }

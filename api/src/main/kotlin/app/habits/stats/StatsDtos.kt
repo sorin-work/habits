@@ -87,8 +87,17 @@ data class OverviewHabit(
 )
 
 @Serializable
+data class WeekdayRate(
+    val day: Int,
+    val expected: Int,
+    val completed: Int,
+    val rate: Double?,
+)
+
+@Serializable
 data class OverviewResponse(
     val period: String,
     val buckets: List<BucketResponse>,
     val habits: List<OverviewHabit>,
+    val weekdays: List<WeekdayRate>,
 )

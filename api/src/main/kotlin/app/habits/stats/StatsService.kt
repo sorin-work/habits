@@ -77,6 +77,8 @@ class StatsService(
         val history = checkIns.forHabits(active.map { it.id }, today)
         val ranges = CompletionStats.bucketRanges(period, count, today, DayOfWeek.MONDAY)
         val totals = MutableList(ranges.size) { Completion.NONE }
+        val weekdayTotals = DayOfWeek.entries.associateWith { Completion.NONE }.toMutableMap()
+        val weekdayFrom = today.minusWeeks(12)
 
         val rows =
             active.map { habit ->
@@ -93,6 +95,16 @@ class StatsService(
                         )
                     totals[index] = totals[index] + completion
                 }
+                if (habit.schedule !is Schedule.TimesPerWeek) {
+                    var day = latest(weekdayFrom, habit.startDate)
+                    while (day.isBefore(today)) {
+                        if (habit.schedule.isScheduledOn(day)) {
+                            val done = if (day in completed) 1 else 0
+                            weekdayTotals[day.dayOfWeek] = weekdayTotals.getValue(day.dayOfWeek) + Completion(1, done)
+                        }
+                        day = day.plusDays(1)
+                    }
+                }
                 val streaks =
                     StreakCalculator.calculate(habit.schedule, habit.startDate, completed, today, DayOfWeek.MONDAY)
                 OverviewHabit(
@@ -108,6 +120,11 @@ class StatsService(
             period = period.name.lowercase(),
             buckets = ranges.mapIndexed { index, (start, end) -> Bucket(start, end, totals[index]).toResponse() },
             habits = rows,
+            weekdays =
+                DayOfWeek.entries.map { day ->
+                    val total = weekdayTotals.getValue(day)
+                    WeekdayRate(day.value, total.expected, total.completed, total.rate)
+                },
         )
     }
 
