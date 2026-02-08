@@ -6,6 +6,7 @@ import type { StatsPeriod } from '../api/types';
 import { CompletionChart } from '../components/CompletionChart';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorMessage } from '../components/ErrorMessage';
+import { WEEKDAYS } from '../lib/dates';
 import { percent } from '../lib/format';
 import { streakLabel } from '../lib/schedule';
 
@@ -31,6 +32,7 @@ export function StatsPage() {
     );
   }
 
+  const byDay = new Map(data.weekdays.map((d) => [d.day, d]));
   const current = data.buckets[data.buckets.length - 1];
 
   return (
@@ -82,6 +84,24 @@ export function StatsPage() {
         </table>
       </section>
 
+      <section className="card">
+        <h2>Best days</h2>
+        <p className="muted small">Completion of scheduled check-ins by weekday over the last 12 weeks.</p>
+        <ul className="weekday-bars">
+          {WEEKDAYS.map((day) => {
+            const entry = byDay.get(day.value);
+            return (
+              <li key={day.value}>
+                <span className="weekday-label">{day.short}</span>
+                <span className="weekday-track">
+                  <span className="weekday-fill" style={{ width: `${(entry?.rate ?? 0) * 100}%` }} />
+                </span>
+                <span className="weekday-value">{percent(entry?.rate)}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
     </div>
   );
 }

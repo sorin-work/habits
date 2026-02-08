@@ -115,6 +115,7 @@ export interface Overview {
   period: StatsPeriod;
   buckets: Bucket[];
   habits: { id: number; name: string; color: string; streak: Streak; last30Days: Completion }[];
+  weekdays: { day: number; expected: number; completed: number; rate: number | null }[];
 }
 
 export interface User {
