@@ -93,7 +93,7 @@ class StatsService(
                             end,
                             today,
                         )
-                    totals[index] = totals[index] + completion
+                    totals[index] = totals[index] + completion.capped()
                 }
                 if (habit.schedule !is Schedule.TimesPerWeek) {
                     var day = latest(weekdayFrom, habit.startDate)
@@ -177,3 +177,6 @@ class StatsService(
         }
     }
 }
+
+/** Over-achieving one habit shouldn't hide a missed one in combined numbers. */
+private fun Completion.capped() = Completion(expected, minOf(completed, expected))

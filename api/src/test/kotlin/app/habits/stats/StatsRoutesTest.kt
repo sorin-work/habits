@@ -99,4 +99,20 @@ class StatsRoutesTest {
             // Monday the 16th: both habits done.
             assertEquals(2, weekdays.first().jsonObject["completed"]!!.int)
         }
+
+    @Test
+    fun `overview doesn't let one habit make up for another`() =
+        apiTest {
+            val token = register()
+            val weekly =
+                mapOf("schedule" to mapOf("type" to "weekly", "timesPerWeek" to 1), "startDate" to "2026-03-09")
+            val gym = createHabit(token, weekly + ("name" to "Gym"))
+            createHabit(token, weekly + ("name" to "Read"))
+            for (day in 9..15) put("/api/habits/$gym/checkins/2026-03-%02d".format(day), mapOf<String, Any>(), token)
+
+            val buckets = get("/api/stats/overview?period=week&count=2", token).obj()["buckets"]!!.jsonArray
+            val lastWeek = buckets.first().jsonObject
+            assertEquals(2, lastWeek["expected"]!!.int)
+            assertEquals(1, lastWeek["completed"]!!.int)
+        }
 }
