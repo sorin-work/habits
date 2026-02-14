@@ -35,7 +35,8 @@ fun Route.habitRoutes(
         route("/api/habits") {
             get {
                 val user = users.get(call.userId)
-                call.respond(service.list(user).map { it.toResponse() })
+                val archived = call.request.queryParameters["archived"] == "true"
+                call.respond(service.list(user, archived).map { it.toResponse() })
             }
             post {
                 val user = users.get(call.userId)

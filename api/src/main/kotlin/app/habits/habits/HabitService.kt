@@ -20,7 +20,10 @@ class HabitService(
     private val checkIns: CheckInRepository,
     private val clock: Clock,
 ) {
-    suspend fun list(user: User): List<Habit> = habits.list(user.id, archived = false)
+    suspend fun list(
+        user: User,
+        archived: Boolean,
+    ): List<Habit> = habits.list(user.id, archived)
 
     suspend fun get(
         user: User,
