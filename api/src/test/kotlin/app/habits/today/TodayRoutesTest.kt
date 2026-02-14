@@ -66,6 +66,18 @@ class TodayRoutesTest {
         }
 
     @Test
+    fun `leaves out archived habits and ones that haven't started`() =
+        apiTest {
+            val token = register()
+            val archived = createHabit(token, dailyHabit("Old"))
+            post("/api/habits/$archived/archive", token = token)
+            createHabit(token, dailyHabit("Later", startDate = "2026-04-01"))
+            createHabit(token, dailyHabit("Now"))
+            val habits = get("/api/today", token).obj()["habits"] as JsonArray
+            assertEquals(listOf("Now"), habits.map { (it.jsonObject["habit"] as JsonObject)["name"]!!.str })
+        }
+
+    @Test
     fun `days follow the user's time zone`() =
         apiTest {
             // 10:00 UTC on the 18th is already the 19th on Kiritimati (UTC+14).

@@ -45,7 +45,7 @@ class TodayService(
     suspend fun forDay(user: User): TodayResponse {
         val date = clock.today(user.timeZone)
 
-        val active = habits.list(user.id).filter { !it.startDate.isAfter(date) }
+        val active = habits.list(user.id, archived = false).filter { !it.startDate.isAfter(date) }
 
         val items =
             active.map { habit ->
