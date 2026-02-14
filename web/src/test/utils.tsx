@@ -48,6 +48,8 @@ export function habit(overrides: Partial<Habit> = {}): Habit {
     target: null,
     unit: null,
     startDate: '2026-03-01',
+    archived: false,
+    archivedAt: null,
     createdAt: '2026-03-01T08:00:00Z',
     ...overrides,
   };

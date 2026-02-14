@@ -17,6 +17,8 @@ export interface Habit {
   target: number | null;
   unit: string | null;
   startDate: string;
+  archived: boolean;
+  archivedAt: string | null;
   createdAt: string;
 }
 

@@ -11,7 +11,7 @@ import type {
   TodayResponse,
 } from './types';
 
-export const listHabits = () => api.get<Habit[]>('/api/habits');
+export const listHabits = (archived = false) => api.get<Habit[]>(`/api/habits?archived=${archived}`);
 
 export const fetchHabit = (id: number) => api.get<HabitDetail>(`/api/habits/${id}`);
 
@@ -20,6 +20,10 @@ export const createHabit = (input: HabitInput) => api.post<Habit>('/api/habits',
 export const updateHabit = (id: number, input: HabitInput) => api.put<Habit>(`/api/habits/${id}`, input);
 
 export const deleteHabit = (id: number) => api.delete(`/api/habits/${id}`);
+
+export const archiveHabit = (id: number) => api.post<Habit>(`/api/habits/${id}/archive`);
+
+export const restoreHabit = (id: number) => api.post<Habit>(`/api/habits/${id}/restore`);
 
 export const fetchToday = () => api.get<TodayResponse>('/api/today');
 
