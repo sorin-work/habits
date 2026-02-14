@@ -2,10 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router';
 import {
+  archiveHabit,
   deleteHabit,
   fetchHabit,
   fetchHabitStats,
   fetchHeatmap,
+  restoreHabit,
 } from '../api/habits';
 import type { StatsPeriod } from '../api/types';
 import { CompletionChart } from '../components/CompletionChart';
@@ -24,6 +26,15 @@ export function HabitDetailPage() {
   const detail = useQuery({ queryKey: ['habit', id], queryFn: () => fetchHabit(id) });
   const heatmap = useQuery({ queryKey: ['habit', id, 'heatmap'], queryFn: () => fetchHeatmap(id) });
   const stats = useQuery({ queryKey: ['habit', id, 'stats', period], queryFn: () => fetchHabitStats(id, period) });
+
+  const afterChange = () => {
+    void queryClient.invalidateQueries({ queryKey: ['habit', id] });
+    void queryClient.invalidateQueries({ queryKey: ['habits'] });
+    void queryClient.invalidateQueries({ queryKey: ['today'] });
+    void queryClient.invalidateQueries({ queryKey: ['overview'] });
+  };
+  const archive = useMutation({ mutationFn: () => archiveHabit(id), onSuccess: afterChange });
+  const restore = useMutation({ mutationFn: () => restoreHabit(id), onSuccess: afterChange });
   const remove = useMutation({
     mutationFn: () => deleteHabit(id),
     onSuccess: () => {
@@ -50,12 +61,22 @@ export function HabitDetailPage() {
           <p className="muted">
             {describeSchedule(habit.schedule)}
             {target && ` · ${target} a day`} · since {formatLong(habit.startDate)}
+            {habit.archived && ' · archived'}
           </p>
         </div>
         <div className="header-actions">
           <Link to={`/habits/${habit.id}/edit`} className="button">
             Edit
           </Link>
+          {habit.archived ? (
+            <button type="button" className="button" disabled={restore.isPending} onClick={() => restore.mutate()}>
+              Restore
+            </button>
+          ) : (
+            <button type="button" className="button" disabled={archive.isPending} onClick={() => archive.mutate()}>
+              Archive
+            </button>
+          )}
           <button
             type="button"
             className="button danger"
@@ -70,7 +91,9 @@ export function HabitDetailPage() {
           </button>
         </div>
       </div>
-      {remove.error && <ErrorMessage error={remove.error} />}
+      {(archive.error || restore.error || remove.error) && (
+        <ErrorMessage error={archive.error ?? restore.error ?? remove.error} />
+      )}
 
       <div className="stat-cards">
         <div className="stat-card">
