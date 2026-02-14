@@ -16,12 +16,15 @@ data class Habit(
     val target: Int?,
     val unit: String?,
     val startDate: LocalDate,
+    val archivedAt: Instant?,
     val createdAt: Instant,
 ) {
     /** How much counts as done for one day: the target for measured habits, otherwise a single check-in. */
     val dailyGoal get() = target ?: 1
 
     fun isComplete(value: Int) = value >= dailyGoal
+
+    val archived get() = archivedAt != null
 }
 
 @Serializable
@@ -34,6 +37,8 @@ data class HabitResponse(
     val target: Int?,
     val unit: String?,
     @Serializable(with = LocalDateSerializer::class) val startDate: LocalDate,
+    val archived: Boolean,
+    @Serializable(with = InstantSerializer::class) val archivedAt: Instant?,
     @Serializable(with = InstantSerializer::class) val createdAt: Instant,
 )
 
@@ -47,6 +52,8 @@ fun Habit.toResponse() =
         target = target,
         unit = unit,
         startDate = startDate,
+        archived = archived,
+        archivedAt = archivedAt,
         createdAt = createdAt,
     )
 

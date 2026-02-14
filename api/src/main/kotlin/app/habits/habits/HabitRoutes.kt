@@ -57,6 +57,14 @@ fun Route.habitRoutes(
                     service.delete(user, call.longPath("id"))
                     call.respond(HttpStatusCode.NoContent)
                 }
+                post("/archive") {
+                    val user = users.get(call.userId)
+                    call.respond(service.archive(user, call.longPath("id")).toResponse())
+                }
+                post("/restore") {
+                    val user = users.get(call.userId)
+                    call.respond(service.restore(user, call.longPath("id")).toResponse())
+                }
 
                 get("/checkins") {
                     val user = users.get(call.userId)

@@ -73,7 +73,7 @@ class StatsService(
         count: Int,
     ): OverviewResponse {
         val today = clock.today(user.timeZone)
-        val active = habits.list(user.id)
+        val active = habits.list(user.id, archived = false)
         val history = checkIns.forHabits(active.map { it.id }, today)
         val ranges = CompletionStats.bucketRanges(period, count, today, DayOfWeek.MONDAY)
         val totals = MutableList(ranges.size) { Completion.NONE }

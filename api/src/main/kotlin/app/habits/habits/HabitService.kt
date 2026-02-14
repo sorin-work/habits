@@ -20,7 +20,7 @@ class HabitService(
     private val checkIns: CheckInRepository,
     private val clock: Clock,
 ) {
-    suspend fun list(user: User): List<Habit> = habits.list(user.id)
+    suspend fun list(user: User): List<Habit> = habits.list(user.id, archived = false)
 
     suspend fun get(
         user: User,
@@ -51,6 +51,26 @@ class HabitService(
         id: Long,
     ) {
         if (!habits.delete(user.id, id)) throw NotFoundException("Habit")
+    }
+
+    suspend fun archive(
+        user: User,
+        id: Long,
+    ): Habit {
+        val habit = get(user, id)
+        if (!habit.archived) habits.setArchived(user.id, id, clock.instant(), clock.instant())
+        return get(user, id)
+    }
+
+    suspend fun restore(
+        user: User,
+        id: Long,
+    ): Habit {
+        val habit = get(user, id)
+        if (habit.archived) {
+            habits.setArchived(user.id, id, null, clock.instant())
+        }
+        return get(user, id)
     }
 
     suspend fun checkIn(

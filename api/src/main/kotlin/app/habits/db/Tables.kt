@@ -28,6 +28,7 @@ object Habits : Table("habits") {
     val target = integer("target").nullable()
     val unit = varchar("unit", 20).nullable()
     val startDate = date("start_date")
+    val archivedAt = timestamp("archived_at").nullable()
     val createdAt = timestamp("created_at")
     val updatedAt = timestamp("updated_at")
 

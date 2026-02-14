@@ -17,12 +17,21 @@ import java.time.Instant
 class HabitRepository(
     private val db: Database,
 ) {
-    suspend fun list(userId: Long): List<Habit> =
+    suspend fun list(
+        userId: Long,
+        archived: Boolean? = null,
+    ): List<Habit> =
         db.query {
             Habits
                 .selectAll()
-                .where { Habits.userId eq userId }
-                .orderBy(Habits.id to SortOrder.ASC)
+                .where {
+                    val owner = Habits.userId eq userId
+                    when (archived) {
+                        null -> owner
+                        true -> owner and Habits.archivedAt.isNotNull()
+                        false -> owner and Habits.archivedAt.isNull()
+                    }
+                }.orderBy(Habits.id to SortOrder.ASC)
                 .map { it.toHabit() }
         }
 
@@ -71,6 +80,19 @@ class HabitRepository(
             } > 0
         }
 
+    suspend fun setArchived(
+        userId: Long,
+        id: Long,
+        archivedAt: Instant?,
+        now: Instant,
+    ): Boolean =
+        db.query {
+            Habits.update({ (Habits.id eq id) and (Habits.userId eq userId) }) {
+                it[Habits.archivedAt] = archivedAt
+                it[updatedAt] = now
+            } > 0
+        }
+
     suspend fun delete(
         userId: Long,
         id: Long,
@@ -104,5 +126,6 @@ fun ResultRow.toHabit() =
         target = this[Habits.target],
         unit = this[Habits.unit],
         startDate = this[Habits.startDate],
+        archivedAt = this[Habits.archivedAt],
         createdAt = this[Habits.createdAt],
     )
