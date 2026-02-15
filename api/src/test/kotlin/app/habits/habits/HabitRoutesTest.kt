@@ -93,6 +93,32 @@ class HabitRoutesTest {
         }
 
     @Test
+    fun `archived habits leave the list and can be restored at the end`() =
+        apiTest {
+            val token = register()
+            val first = createHabit(token, dailyHabit("First"))
+            createHabit(token, dailyHabit("Second"))
+
+            val archived = post("/api/habits/$first/archive", token = token)
+            assertEquals(HttpStatusCode.OK, archived.status)
+            assertEquals(
+                true,
+                archived
+                    .obj()["archived"]!!
+                    .jsonPrimitive.content
+                    .toBoolean(),
+            )
+            assertEquals(listOf("Second"), get("/api/habits", token).arr().map { it.jsonObject["name"]!!.str })
+            assertEquals(
+                listOf("First"),
+                get("/api/habits?archived=true", token).arr().map { it.jsonObject["name"]!!.str },
+            )
+
+            assertEquals(HttpStatusCode.OK, post("/api/habits/$first/restore", token = token).status)
+            assertEquals(listOf("First", "Second"), get("/api/habits", token).arr().map { it.jsonObject["name"]!!.str })
+        }
+
+    @Test
     fun `delete removes the habit`() =
         apiTest {
             val token = register()
