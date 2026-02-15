@@ -99,6 +99,21 @@ class DemoSeeder(
             if (day != today && random.nextDouble() < 0.55) 1 else null
         }
 
+        val spanishUntil = today.minusDays(20)
+        val spanish =
+            add(
+                "Practice Spanish",
+                "#26a69a",
+                Schedule.Daily,
+                110,
+                target = 15,
+                unit = "minutes",
+                until = spanishUntil,
+            ) {
+                if (random.nextDouble() < 0.5) random.nextInt(10, 30) else null
+            }
+        habits.setArchived(user.id, spanish, spanishUntil.atStartOfDay(zone).toInstant(), now)
+
         checkIns.insertAll(entries, now)
         log.info("Seeded demo user {} with {} check-ins", DEMO_EMAIL, entries.size)
     }
