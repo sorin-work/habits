@@ -6,6 +6,7 @@ import app.habits.checkins.CheckInRequest
 import app.habits.checkins.MAX_CHECK_IN_VALUE
 import app.habits.checkins.MAX_NOTE_LENGTH
 import app.habits.common.ApiException
+import app.habits.common.ConflictException
 import app.habits.common.DateRange
 import app.habits.common.NotFoundException
 import app.habits.common.today
@@ -101,6 +102,7 @@ class HabitService(
         date: LocalDate,
     ) {
         val habit = get(user, id)
+        if (habit.archived) throw archived()
         if (!checkIns.delete(habit.id, date)) throw NotFoundException("Check-in")
     }
 
@@ -118,6 +120,7 @@ class HabitService(
         habit: Habit,
         date: LocalDate,
     ) {
+        if (habit.archived) throw archived()
         if (date.isAfter(clock.today(user.timeZone))) {
             throw ApiException(
                 HttpStatusCode.BadRequest,
@@ -129,4 +132,6 @@ class HabitService(
             throw ApiException(HttpStatusCode.BadRequest, "before_start", "This habit starts on ${habit.startDate}")
         }
     }
+
+    private fun archived() = ConflictException("habit_archived", "Restore this habit before changing its check-ins")
 }

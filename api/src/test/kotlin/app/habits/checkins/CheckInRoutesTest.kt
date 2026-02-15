@@ -64,6 +64,17 @@ class CheckInRoutesTest {
         }
 
     @Test
+    fun `archived habits can't be checked in`() =
+        apiTest {
+            val token = register()
+            val id = createHabit(token)
+            post("/api/habits/$id/archive", token = token)
+            val response = put("/api/habits/$id/checkins/2026-03-18", mapOf<String, Any>(), token)
+            assertEquals(HttpStatusCode.Conflict, response.status)
+            assertEquals("habit_archived", response.obj()["error"]!!.str)
+        }
+
+    @Test
     fun `undo a check-in`() =
         apiTest {
             val token = register()
