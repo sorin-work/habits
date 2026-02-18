@@ -8,7 +8,7 @@ plugins {
 group = "app.habits"
 version = "0.1.0"
 
-val ktorVersion = "3.2.3"
+val ktorVersion = "3.3.0"
 val exposedVersion = "0.60.0"
 val flywayVersion = "11.10.0"
 
