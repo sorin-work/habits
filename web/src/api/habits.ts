@@ -25,6 +25,8 @@ export const archiveHabit = (id: number) => api.post<Habit>(`/api/habits/${id}/a
 
 export const restoreHabit = (id: number) => api.post<Habit>(`/api/habits/${id}/restore`);
 
+export const reorderHabits = (ids: number[]) => api.put<Habit[]>('/api/habits/order', { ids });
+
 export const fetchToday = () => api.get<TodayResponse>('/api/today');
 
 export const saveCheckIn = (habitId: number, date: string, input: { value?: number; note?: string | null }) =>

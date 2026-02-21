@@ -251,6 +251,21 @@ a {
   cursor: pointer;
 }
 
+.icon-button {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.icon-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 .form {
   display: flex;
   flex-direction: column;

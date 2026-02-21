@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link, useSearchParams } from 'react-router';
-import { deleteHabit, listHabits, restoreHabit } from '../api/habits';
+import { deleteHabit, listHabits, reorderHabits, restoreHabit } from '../api/habits';
+import type { Habit } from '../api/types';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { describeSchedule, describeTarget } from '../lib/schedule';
@@ -11,6 +12,14 @@ export function HabitsPage() {
   const queryClient = useQueryClient();
   const query = useQuery({ queryKey: ['habits', archived], queryFn: () => listHabits(archived) });
 
+  const reorder = useMutation({
+    mutationFn: reorderHabits,
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['habits'] });
+      void queryClient.invalidateQueries({ queryKey: ['today'] });
+    },
+  });
+
   const refreshAll = () => {
     void queryClient.invalidateQueries({ queryKey: ['habits'] });
     void queryClient.invalidateQueries({ queryKey: ['today'] });
@@ -18,6 +27,13 @@ export function HabitsPage() {
   };
   const restore = useMutation({ mutationFn: restoreHabit, onSuccess: refreshAll });
   const remove = useMutation({ mutationFn: deleteHabit, onSuccess: refreshAll });
+
+  const move = (habits: Habit[], index: number, delta: number) => {
+    const ids = habits.map((h) => h.id);
+    const [moved] = ids.splice(index, 1);
+    ids.splice(index + delta, 0, moved);
+    reorder.mutate(ids);
+  };
 
   return (
     <div className="page">
@@ -50,7 +66,7 @@ export function HabitsPage() {
         )
       ) : (
         <ul className="habit-list">
-          {query.data.map((habit) => (
+          {query.data.map((habit, index) => (
             <li key={habit.id} className="habit-row" style={{ ['--habit-color' as string]: habit.color }}>
               <span className="habit-dot" aria-hidden="true" />
               <div className="habit-row-text">
@@ -85,12 +101,35 @@ export function HabitsPage() {
                     Delete
                   </button>
                 </div>
-              ) : null}
+              ) : (
+                <div className="row-actions">
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label={`Move ${habit.name} up`}
+                    disabled={index === 0 || reorder.isPending}
+                    onClick={() => move(query.data, index, -1)}
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    className="icon-button"
+                    aria-label={`Move ${habit.name} down`}
+                    disabled={index === query.data.length - 1 || reorder.isPending}
+                    onClick={() => move(query.data, index, 1)}
+                  >
+                    ↓
+                  </button>
+                </div>
+              )}
             </li>
           ))}
         </ul>
       )}
-      {(restore.error || remove.error) && <ErrorMessage error={restore.error ?? remove.error} />}
+      {(reorder.error || restore.error || remove.error) && (
+        <ErrorMessage error={reorder.error ?? restore.error ?? remove.error} />
+      )}
     </div>
   );
 }
