@@ -116,7 +116,7 @@ class HabitRoutesTest {
             )
 
             assertEquals(HttpStatusCode.OK, post("/api/habits/$first/restore", token = token).status)
-            assertEquals(listOf("First", "Second"), get("/api/habits", token).arr().map { it.jsonObject["name"]!!.str })
+            assertEquals(listOf("Second", "First"), get("/api/habits", token).arr().map { it.jsonObject["name"]!!.str })
         }
 
     @Test

@@ -90,8 +90,11 @@ class HabitRepository(
         now: Instant,
     ): Boolean =
         db.query {
+            // Restored habits go to the end of the list rather than back to their old slot.
+            val position = if (archivedAt == null) nextPosition(userId) else null
             Habits.update({ (Habits.id eq id) and (Habits.userId eq userId) }) {
                 it[Habits.archivedAt] = archivedAt
+                if (position != null) it[Habits.position] = position
                 it[updatedAt] = now
             } > 0
         }
