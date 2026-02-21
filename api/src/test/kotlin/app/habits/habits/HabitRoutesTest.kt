@@ -134,6 +134,25 @@ class HabitRoutesTest {
         }
 
     @Test
+    fun `reorder rejects incomplete or duplicated lists`() =
+        apiTest {
+            val token = register()
+            val a = createHabit(token, dailyHabit("A"))
+            val b = createHabit(token, dailyHabit("B"))
+            assertEquals(HttpStatusCode.BadRequest, put("/api/habits/order", mapOf("ids" to listOf(a)), token).status)
+            assertEquals(
+                HttpStatusCode.BadRequest,
+                put("/api/habits/order", mapOf("ids" to listOf(a, b, b)), token).status,
+            )
+            val other = register("kim@example.com")
+            val foreign = createHabit(other)
+            assertEquals(
+                HttpStatusCode.BadRequest,
+                put("/api/habits/order", mapOf("ids" to listOf(a, foreign)), token).status,
+            )
+        }
+
+    @Test
     fun `delete removes the habit`() =
         apiTest {
             val token = register()

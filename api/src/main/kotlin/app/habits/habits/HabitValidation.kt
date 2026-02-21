@@ -82,6 +82,7 @@ fun validateReorder(
     activeIds: Set<Long>,
 ) {
     validate {
+        check("ids", ids.size == ids.toSet().size) { "Each habit can only appear once" }
         check("ids", ids.toSet() == activeIds) { "The list must contain every active habit exactly once" }
     }
 }
