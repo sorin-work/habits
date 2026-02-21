@@ -16,6 +16,7 @@ data class Habit(
     val target: Int?,
     val unit: String?,
     val startDate: LocalDate,
+    val position: Int,
     val archivedAt: Instant?,
     val createdAt: Instant,
 ) {
@@ -37,6 +38,7 @@ data class HabitResponse(
     val target: Int?,
     val unit: String?,
     @Serializable(with = LocalDateSerializer::class) val startDate: LocalDate,
+    val position: Int,
     val archived: Boolean,
     @Serializable(with = InstantSerializer::class) val archivedAt: Instant?,
     @Serializable(with = InstantSerializer::class) val createdAt: Instant,
@@ -52,6 +54,7 @@ fun Habit.toResponse() =
         target = target,
         unit = unit,
         startDate = startDate,
+        position = position,
         archived = archived,
         archivedAt = archivedAt,
         createdAt = createdAt,
@@ -66,6 +69,11 @@ data class HabitRequest(
     val target: Int? = null,
     val unit: String? = null,
     @Serializable(with = LocalDateSerializer::class) val startDate: LocalDate? = null,
+)
+
+@Serializable
+data class ReorderRequest(
+    val ids: List<Long> = emptyList(),
 )
 
 /** A validated create or update. */

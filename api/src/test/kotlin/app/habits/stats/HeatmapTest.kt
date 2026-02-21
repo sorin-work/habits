@@ -22,6 +22,7 @@ class HeatmapTest {
         target = target,
         unit = null,
         startDate = LocalDate.of(2026, 3, 10),
+        position = 0,
         archivedAt = null,
         createdAt = Instant.EPOCH,
     )

@@ -55,4 +55,11 @@ class HabitValidationTest {
         )
         assertEquals(setOf("schedule.type"), errors(HabitRequest("Gym", schedule = ScheduleDto("monthly"))).keys)
     }
+
+    @Test
+    fun `reorder needs every active habit exactly once`() {
+        validateReorder(listOf(3, 1, 2), setOf(1, 2, 3))
+        assertFailsWith<ValidationException> { validateReorder(listOf(1, 2), setOf(1, 2, 3)) }
+        assertFailsWith<ValidationException> { validateReorder(listOf(1, 2, 4), setOf(1, 2, 3)) }
+    }
 }

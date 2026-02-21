@@ -45,6 +45,7 @@ class HabitRoutesTest {
             createHabit(token, dailyHabit("Read"))
             val list = get("/api/habits", token).arr()
             assertEquals(listOf("Run", "Read"), list.map { it.jsonObject["name"]!!.str })
+            assertEquals(listOf(0, 1), list.map { it.jsonObject["position"]!!.int })
         }
 
     @Test
@@ -116,6 +117,20 @@ class HabitRoutesTest {
 
             assertEquals(HttpStatusCode.OK, post("/api/habits/$first/restore", token = token).status)
             assertEquals(listOf("First", "Second"), get("/api/habits", token).arr().map { it.jsonObject["name"]!!.str })
+        }
+
+    @Test
+    fun `reorder habits`() =
+        apiTest {
+            val token = register()
+            val a = createHabit(token, dailyHabit("A"))
+            val b = createHabit(token, dailyHabit("B"))
+            val c = createHabit(token, dailyHabit("C"))
+
+            val response = put("/api/habits/order", mapOf("ids" to listOf(c, a, b)), token)
+            assertEquals(HttpStatusCode.OK, response.status)
+            assertEquals(listOf("C", "A", "B"), response.arr().map { it.jsonObject["name"]!!.str })
+            assertEquals(listOf("C", "A", "B"), get("/api/habits", token).arr().map { it.jsonObject["name"]!!.str })
         }
 
     @Test

@@ -9,6 +9,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.max
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 import org.jetbrains.exposed.sql.update
@@ -31,7 +32,7 @@ class HabitRepository(
                         true -> owner and Habits.archivedAt.isNotNull()
                         false -> owner and Habits.archivedAt.isNull()
                     }
-                }.orderBy(Habits.id to SortOrder.ASC)
+                }.orderBy(Habits.position to SortOrder.ASC, Habits.id to SortOrder.ASC)
                 .map { it.toHabit() }
         }
 
@@ -53,10 +54,12 @@ class HabitRepository(
         now: Instant,
     ): Habit =
         db.query {
+            val position = nextPosition(userId)
             val id =
                 Habits.insert {
                     it[Habits.userId] = userId
                     it.write(input)
+                    it[Habits.position] = position
                     it[createdAt] = now
                     it[updatedAt] = now
                 } get Habits.id
@@ -93,6 +96,19 @@ class HabitRepository(
             } > 0
         }
 
+    suspend fun reorder(
+        userId: Long,
+        ids: List<Long>,
+        now: Instant,
+    ) = db.query {
+        ids.forEachIndexed { index, id ->
+            Habits.update({ (Habits.id eq id) and (Habits.userId eq userId) }) {
+                it[position] = index
+                it[updatedAt] = now
+            }
+        }
+    }
+
     suspend fun delete(
         userId: Long,
         id: Long,
@@ -100,6 +116,16 @@ class HabitRepository(
         db.query {
             Habits.deleteWhere { (Habits.id eq id) and (Habits.userId eq userId) } > 0
         }
+
+    private fun nextPosition(userId: Long): Int {
+        val max = Habits.position.max()
+        val current =
+            Habits
+                .select(max)
+                .where { Habits.userId eq userId }
+                .single()[max]
+        return (current ?: -1) + 1
+    }
 }
 
 private fun UpdateBuilder<*>.write(input: HabitInput) {
@@ -126,6 +152,7 @@ fun ResultRow.toHabit() =
         target = this[Habits.target],
         unit = this[Habits.unit],
         startDate = this[Habits.startDate],
+        position = this[Habits.position],
         archivedAt = this[Habits.archivedAt],
         createdAt = this[Habits.createdAt],
     )

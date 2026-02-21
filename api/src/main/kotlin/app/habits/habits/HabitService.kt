@@ -77,6 +77,16 @@ class HabitService(
         return get(user, id)
     }
 
+    suspend fun reorder(
+        user: User,
+        ids: List<Long>,
+    ): List<Habit> {
+        val active = habits.list(user.id, archived = false)
+        validateReorder(ids, active.map { it.id }.toSet())
+        habits.reorder(user.id, ids, clock.instant())
+        return habits.list(user.id, archived = false)
+    }
+
     suspend fun checkIn(
         user: User,
         id: Long,

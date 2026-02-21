@@ -75,3 +75,13 @@ private fun Validator.parseSchedule(dto: ScheduleDto?): Schedule? {
         else -> error("schedule.type", "Schedule must be daily, weekdays or weekly").let { null }
     }
 }
+
+/** Shared by the reorder endpoint: ids must be exactly the user's active habits, each once. */
+fun validateReorder(
+    ids: List<Long>,
+    activeIds: Set<Long>,
+) {
+    validate {
+        check("ids", ids.toSet() == activeIds) { "The list must contain every active habit exactly once" }
+    }
+}

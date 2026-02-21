@@ -43,6 +43,11 @@ fun Route.habitRoutes(
                 val habit = service.create(user, call.receive())
                 call.respond(HttpStatusCode.Created, habit.toResponse())
             }
+            put("/order") {
+                val user = users.get(call.userId)
+                val request = call.receive<ReorderRequest>()
+                call.respond(service.reorder(user, request.ids).map { it.toResponse() })
+            }
 
             route("/{id}") {
                 get {
