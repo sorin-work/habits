@@ -14,7 +14,22 @@ export function HabitsPage() {
 
   const reorder = useMutation({
     mutationFn: reorderHabits,
-    onSuccess: () => {
+    onMutate: async (ids: number[]) => {
+      await queryClient.cancelQueries({ queryKey: ['habits', false] });
+      const previous = queryClient.getQueryData<Habit[]>(['habits', false]);
+      if (previous) {
+        const byId = new Map(previous.map((h) => [h.id, h]));
+        queryClient.setQueryData(
+          ['habits', false],
+          ids.map((id) => byId.get(id)!),
+        );
+      }
+      return { previous };
+    },
+    onError: (_error, _ids, context) => {
+      if (context?.previous) queryClient.setQueryData(['habits', false], context.previous);
+    },
+    onSettled: () => {
       void queryClient.invalidateQueries({ queryKey: ['habits'] });
       void queryClient.invalidateQueries({ queryKey: ['today'] });
     },
