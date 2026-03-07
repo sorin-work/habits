@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.update
 import java.time.DayOfWeek
 import java.time.Instant
 import java.time.ZoneId
@@ -51,6 +52,19 @@ class UserRepository(
                 } get Users.id
             User(id, email, passwordHash, name, timeZone, DayOfWeek.MONDAY, createdAt)
         }
+
+    suspend fun updateProfile(
+        id: Long,
+        name: String,
+        timeZone: ZoneId,
+        weekStart: DayOfWeek,
+    ) = db.query {
+        Users.update({ Users.id eq id }) {
+            it[Users.name] = name
+            it[Users.timeZone] = timeZone.id
+            it[Users.weekStart] = weekStart.name
+        }
+    }
 }
 
 private fun ResultRow.toUser() =

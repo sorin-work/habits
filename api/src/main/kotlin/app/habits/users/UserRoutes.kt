@@ -9,6 +9,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
+import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 
 fun Route.authRoutes(service: UserService) {
@@ -28,6 +29,9 @@ fun Route.userRoutes(service: UserService) {
         route("/api/me") {
             get {
                 call.respond(service.get(call.userId).toResponse())
+            }
+            put {
+                call.respond(service.updateProfile(call.userId, call.receive()).toResponse())
             }
         }
     }

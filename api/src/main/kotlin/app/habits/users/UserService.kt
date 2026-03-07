@@ -4,6 +4,7 @@ import app.habits.auth.JwtService
 import app.habits.auth.PasswordHasher
 import app.habits.common.ApiException
 import app.habits.common.ConflictException
+import app.habits.common.NotFoundException
 import app.habits.common.UnauthorizedException
 import app.habits.common.Validator
 import app.habits.common.isEmail
@@ -11,6 +12,7 @@ import app.habits.common.normalizeEmail
 import app.habits.common.validate
 import io.ktor.http.HttpStatusCode
 import java.time.Clock
+import java.time.DayOfWeek
 import java.time.ZoneId
 
 const val MIN_PASSWORD_LENGTH = 8
@@ -22,6 +24,8 @@ fun parseTimeZone(value: String): ZoneId? {
     if (trimmed == "UTC") return ZoneId.of("UTC")
     return if (trimmed in ZoneId.getAvailableZoneIds()) ZoneId.of(trimmed) else null
 }
+
+private val WEEK_STARTS = setOf(DayOfWeek.MONDAY, DayOfWeek.SUNDAY)
 
 class UserService(
     private val users: UserRepository,
@@ -68,6 +72,23 @@ class UserService(
     }
 
     suspend fun get(userId: Long): User = users.findById(userId) ?: throw UnauthorizedException()
+
+    suspend fun updateProfile(
+        userId: Long,
+        request: UpdateProfileRequest,
+    ): User {
+        val name = request.name.trim()
+        val zone = parseTimeZone(request.timeZone)
+        val weekStart = runCatching { DayOfWeek.valueOf(request.weekStart.uppercase()) }.getOrNull()
+        validate {
+            check("name", name.isNotEmpty()) { "Enter your name" }
+            check("name", name.length <= 80) { "Name must be at most 80 characters" }
+            check("timeZone", zone != null) { "Unknown time zone" }
+            check("weekStart", weekStart in WEEK_STARTS) { "Weeks can start on Monday or Sunday" }
+        }
+        users.updateProfile(userId, name, zone!!, weekStart!!)
+        return users.findById(userId) ?: throw NotFoundException("User")
+    }
 
     private fun invalidCredentials() =
         ApiException(HttpStatusCode.Unauthorized, "invalid_credentials", "Email or password is incorrect")

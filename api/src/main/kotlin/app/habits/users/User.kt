@@ -56,3 +56,10 @@ data class AuthResponse(
     @Serializable(with = InstantSerializer::class) val expiresAt: Instant,
     val user: UserResponse,
 )
+
+@Serializable
+data class UpdateProfileRequest(
+    val name: String = "",
+    val timeZone: String = "",
+    val weekStart: String = "MONDAY",
+)
