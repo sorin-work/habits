@@ -103,4 +103,24 @@ class AuthRoutesTest {
             assertEquals("unauthorized", response.obj()["error"]!!.str)
             assertEquals(HttpStatusCode.Unauthorized, get("/api/me", token = "not-a-token").status)
         }
+
+    @Test
+    fun `update profile`() =
+        apiTest {
+            val token = register()
+            val response =
+                put(
+                    "/api/me",
+                    mapOf("name" to "Samantha", "timeZone" to "America/New_York", "weekStart" to "SUNDAY"),
+                    token,
+                )
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.obj()
+            assertEquals("Samantha", body["name"]!!.str)
+            assertEquals("America/New_York", body["timeZone"]!!.str)
+            assertEquals("SUNDAY", body["weekStart"]!!.str)
+
+            val invalid = put("/api/me", mapOf("name" to "Sam", "timeZone" to "UTC", "weekStart" to "FRIDAY"), token)
+            assertEquals(HttpStatusCode.BadRequest, invalid.status)
+        }
 }
