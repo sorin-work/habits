@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.ZoneId
 
@@ -45,9 +46,10 @@ class UserRepository(
                     it[Users.passwordHash] = passwordHash
                     it[Users.name] = name
                     it[Users.timeZone] = timeZone.id
+                    it[Users.weekStart] = DayOfWeek.MONDAY.name
                     it[Users.createdAt] = createdAt
                 } get Users.id
-            User(id, email, passwordHash, name, timeZone, createdAt)
+            User(id, email, passwordHash, name, timeZone, DayOfWeek.MONDAY, createdAt)
         }
 }
 
@@ -58,5 +60,6 @@ private fun ResultRow.toUser() =
         passwordHash = this[Users.passwordHash],
         name = this[Users.name],
         timeZone = ZoneId.of(this[Users.timeZone]),
+        weekStart = DayOfWeek.valueOf(this[Users.weekStart]),
         createdAt = this[Users.createdAt],
     )

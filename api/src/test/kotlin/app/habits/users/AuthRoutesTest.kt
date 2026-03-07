@@ -33,6 +33,7 @@ class AuthRoutesTest {
             val user = body["user"]!!.jsonObject
             assertEquals("sam@example.com", user["email"]!!.str)
             assertEquals("Europe/Berlin", user["timeZone"]!!.str)
+            assertEquals("MONDAY", user["weekStart"]!!.str)
         }
 
     @Test

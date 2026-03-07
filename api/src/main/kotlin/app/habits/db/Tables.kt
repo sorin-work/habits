@@ -11,6 +11,7 @@ object Users : Table("users") {
     val passwordHash = varchar("password_hash", 100)
     val name = varchar("name", 80)
     val timeZone = varchar("time_zone", 64)
+    val weekStart = varchar("week_start", 10)
     val createdAt = timestamp("created_at")
 
     override val primaryKey = PrimaryKey(id)

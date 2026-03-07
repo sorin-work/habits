@@ -2,6 +2,7 @@ package app.habits.users
 
 import app.habits.common.InstantSerializer
 import kotlinx.serialization.Serializable
+import java.time.DayOfWeek
 import java.time.Instant
 import java.time.ZoneId
 
@@ -11,6 +12,7 @@ data class User(
     val passwordHash: String,
     val name: String,
     val timeZone: ZoneId,
+    val weekStart: DayOfWeek,
     val createdAt: Instant,
 )
 
@@ -20,6 +22,7 @@ data class UserResponse(
     val email: String,
     val name: String,
     val timeZone: String,
+    val weekStart: String,
     @Serializable(with = InstantSerializer::class) val createdAt: Instant,
 )
 
@@ -29,6 +32,7 @@ fun User.toResponse() =
         email = email,
         name = name,
         timeZone = timeZone.id,
+        weekStart = weekStart.name,
         createdAt = createdAt,
     )
 
