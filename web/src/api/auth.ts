@@ -8,3 +8,5 @@ export const register = (input: { email: string; password: string; name: string 
   api.post<AuthResponse>('/api/auth/register', input);
 
 export const fetchMe = () => api.get<User>('/api/me');
+
+export const updateProfile = (input: { name: string; timeZone: string }) => api.put<User>('/api/me', input);
