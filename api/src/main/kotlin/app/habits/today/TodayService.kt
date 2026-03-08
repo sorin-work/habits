@@ -14,7 +14,6 @@ import app.habits.stats.toResponse
 import app.habits.users.User
 import kotlinx.serialization.Serializable
 import java.time.Clock
-import java.time.DayOfWeek
 import java.time.LocalDate
 
 @Serializable
@@ -53,7 +52,7 @@ class TodayService(
                 val entry = entries.lastOrNull { it.day == date }
                 val completed = StatsService.completedDays(habit, entries)
                 val doneToday = entry != null && habit.isComplete(entry.value)
-                val week = StatsService.weekProgress(habit, completed, date, DayOfWeek.MONDAY)
+                val week = StatsService.weekProgress(habit, completed, date, user.weekStart)
                 val due = habit.schedule.isScheduledOn(date)
                 TodayHabit(
                     habit = habit.toResponse(),
@@ -63,7 +62,7 @@ class TodayService(
                     completed = doneToday,
                     streak =
                         StreakCalculator
-                            .calculate(habit.schedule, habit.startDate, completed, date, DayOfWeek.MONDAY)
+                            .calculate(habit.schedule, habit.startDate, completed, date, user.weekStart)
                             .toResponse(),
                     week = week,
                 )

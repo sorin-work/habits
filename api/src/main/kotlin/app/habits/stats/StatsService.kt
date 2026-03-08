@@ -45,7 +45,7 @@ class StatsService(
                 period,
                 count,
                 clock.today(user.timeZone),
-                DayOfWeek.MONDAY,
+                user.weekStart,
             )
         return HabitStatsResponse(period.name.lowercase(), buckets.map { it.toResponse() })
     }
@@ -75,7 +75,7 @@ class StatsService(
         val today = clock.today(user.timeZone)
         val active = habits.list(user.id, archived = false)
         val history = checkIns.forHabits(active.map { it.id }, today)
-        val ranges = CompletionStats.bucketRanges(period, count, today, DayOfWeek.MONDAY)
+        val ranges = CompletionStats.bucketRanges(period, count, today, user.weekStart)
         val totals = MutableList(ranges.size) { Completion.NONE }
         val weekdayTotals = DayOfWeek.entries.associateWith { Completion.NONE }.toMutableMap()
         val weekdayFrom = today.minusWeeks(12)
@@ -106,7 +106,7 @@ class StatsService(
                     }
                 }
                 val streaks =
-                    StreakCalculator.calculate(habit.schedule, habit.startDate, completed, today, DayOfWeek.MONDAY)
+                    StreakCalculator.calculate(habit.schedule, habit.startDate, completed, today, user.weekStart)
                 OverviewHabit(
                     id = habit.id,
                     name = habit.name,
@@ -135,12 +135,12 @@ class StatsService(
     ): HabitSummary {
         val today = clock.today(user.timeZone)
         val completed = completedDays(habit, history)
-        val streaks = StreakCalculator.calculate(habit.schedule, habit.startDate, completed, today, DayOfWeek.MONDAY)
+        val streaks = StreakCalculator.calculate(habit.schedule, habit.startDate, completed, today, user.weekStart)
         return HabitSummary(
             streak = streaks.toResponse(),
             last30Days = last30(habit, completed, today).toResponse(),
             totalCheckIns = history.size,
-            thisWeek = weekProgress(habit, completed, today, DayOfWeek.MONDAY),
+            thisWeek = weekProgress(habit, completed, today, user.weekStart),
         )
     }
 
