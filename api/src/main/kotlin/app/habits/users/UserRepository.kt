@@ -65,6 +65,13 @@ class UserRepository(
             it[Users.weekStart] = weekStart.name
         }
     }
+
+    suspend fun updatePassword(
+        id: Long,
+        passwordHash: String,
+    ) = db.query {
+        Users.update({ Users.id eq id }) { it[Users.passwordHash] = passwordHash }
+    }
 }
 
 private fun ResultRow.toUser() =

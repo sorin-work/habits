@@ -63,3 +63,9 @@ data class UpdateProfileRequest(
     val timeZone: String = "",
     val weekStart: String = "MONDAY",
 )
+
+@Serializable
+data class ChangePasswordRequest(
+    val currentPassword: String = "",
+    val newPassword: String = "",
+)

@@ -90,6 +90,20 @@ class UserService(
         return users.findById(userId) ?: throw NotFoundException("User")
     }
 
+    suspend fun changePassword(
+        userId: Long,
+        request: ChangePasswordRequest,
+    ) {
+        val user = get(userId)
+        validate {
+            check("currentPassword", hasher.verify(request.currentPassword, user.passwordHash)) {
+                "Current password is incorrect"
+            }
+            checkPassword("newPassword", request.newPassword)
+        }
+        users.updatePassword(userId, hasher.hash(request.newPassword))
+    }
+
     private fun invalidCredentials() =
         ApiException(HttpStatusCode.Unauthorized, "invalid_credentials", "Email or password is incorrect")
 }

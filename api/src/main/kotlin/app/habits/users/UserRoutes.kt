@@ -33,6 +33,10 @@ fun Route.userRoutes(service: UserService) {
             put {
                 call.respond(service.updateProfile(call.userId, call.receive()).toResponse())
             }
+            put("/password") {
+                service.changePassword(call.userId, call.receive())
+                call.respond(HttpStatusCode.NoContent)
+            }
         }
     }
 }
