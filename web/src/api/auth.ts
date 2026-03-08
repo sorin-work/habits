@@ -11,3 +11,6 @@ export const fetchMe = () => api.get<User>('/api/me');
 
 export const updateProfile = (input: { name: string; timeZone: string; weekStart: WeekStart }) =>
   api.put<User>('/api/me', input);
+
+export const changePassword = (currentPassword: string, newPassword: string) =>
+  api.put<void>('/api/me/password', { currentPassword, newPassword });

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
-import { updateProfile } from '../api/auth';
+import { changePassword, updateProfile } from '../api/auth';
 import { ApiError } from '../api/client';
 import type { WeekStart } from '../api/types';
 import { useAuth, useUser } from '../auth/AuthContext';
@@ -12,6 +12,7 @@ export function SettingsPage() {
     <div className="page narrow">
       <h1>Settings</h1>
       <ProfileForm />
+      <PasswordForm />
     </div>
   );
 }
@@ -64,6 +65,58 @@ function ProfileForm() {
       <div className="form-actions">
         <button type="submit" className="button primary" disabled={save.isPending}>
           Save profile
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function PasswordForm() {
+  const [current, setCurrent] = useState('');
+  const [next, setNext] = useState('');
+  const save = useMutation({
+    mutationFn: () => changePassword(current, next),
+    onSuccess: () => {
+      setCurrent('');
+      setNext('');
+    },
+  });
+  const fields = save.error instanceof ApiError ? save.error.fields : {};
+
+  return (
+    <form
+      className="card form"
+      onSubmit={(event) => {
+        event.preventDefault();
+        save.mutate();
+      }}
+    >
+      <h2>Password</h2>
+      <Field label="Current password" error={fields.currentPassword}>
+        {(props) => (
+          <input
+            {...props}
+            type="password"
+            autoComplete="current-password"
+            value={current}
+            onChange={(e) => setCurrent(e.target.value)}
+          />
+        )}
+      </Field>
+      <Field label="New password" error={fields.newPassword} hint="At least 8 characters.">
+        {(props) => (
+          <input
+            {...props}
+            type="password"
+            autoComplete="new-password"
+            value={next}
+            onChange={(e) => setNext(e.target.value)}
+          />
+        )}
+      </Field>
+      <div className="form-actions">
+        <button type="submit" className="button" disabled={save.isPending || !current || !next}>
+          Change password
         </button>
       </div>
     </form>
