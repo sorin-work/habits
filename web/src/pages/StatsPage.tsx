@@ -3,14 +3,16 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { fetchOverview } from '../api/habits';
 import type { StatsPeriod } from '../api/types';
+import { useUser } from '../auth/AuthContext';
 import { CompletionChart } from '../components/CompletionChart';
 import { EmptyState } from '../components/EmptyState';
 import { ErrorMessage } from '../components/ErrorMessage';
-import { WEEKDAYS } from '../lib/dates';
+import { orderedWeekdays } from '../lib/dates';
 import { percent } from '../lib/format';
 import { streakLabel } from '../lib/schedule';
 
 export function StatsPage() {
+  const user = useUser();
   const [period, setPeriod] = useState<StatsPeriod>('week');
   const query = useQuery({ queryKey: ['overview', period], queryFn: () => fetchOverview(period) });
 
@@ -88,7 +90,7 @@ export function StatsPage() {
         <h2>Best days</h2>
         <p className="muted small">Completion of scheduled check-ins by weekday over the last 12 weeks.</p>
         <ul className="weekday-bars">
-          {WEEKDAYS.map((day) => {
+          {orderedWeekdays(user.weekStart).map((day) => {
             const entry = byDay.get(day.value);
             return (
               <li key={day.value}>

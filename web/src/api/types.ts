@@ -121,11 +121,14 @@ export interface Overview {
   weekdays: { day: number; expected: number; completed: number; rate: number | null }[];
 }
 
+export type WeekStart = 'MONDAY' | 'SUNDAY';
+
 export interface User {
   id: number;
   email: string;
   name: string;
   timeZone: string;
+  weekStart: WeekStart;
   createdAt: string;
 }
 

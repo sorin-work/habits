@@ -1,4 +1,4 @@
-import type { HeatmapDay } from '../api/types';
+import type { HeatmapDay, WeekStart } from '../api/types';
 import { formatMonth, isoWeekday, parseDate } from './dates';
 
 export interface HeatmapColumn {
@@ -9,7 +9,7 @@ export interface HeatmapColumn {
 }
 
 /** Arranges heatmap days into week columns, GitHub style. */
-export function buildColumns(days: HeatmapDay[], weekStart: 'MONDAY' | 'SUNDAY'): HeatmapColumn[] {
+export function buildColumns(days: HeatmapDay[], weekStart: WeekStart): HeatmapColumn[] {
   const first = weekStart === 'SUNDAY' ? 7 : 1;
   const columns: HeatmapColumn[] = [];
   let current: (HeatmapDay | null)[] = [];

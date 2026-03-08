@@ -1,18 +1,19 @@
-import type { Heatmap } from '../api/types';
-import { WEEKDAYS } from '../lib/dates';
+import type { Heatmap, WeekStart } from '../api/types';
+import { orderedWeekdays } from '../lib/dates';
 import { buildColumns } from '../lib/heatmap';
 
 interface HabitHeatmapProps {
   heatmap: Heatmap;
   color: string;
+  weekStart: WeekStart;
 }
 
 const OPACITY = [0, 0.3, 0.5, 0.75, 1];
 
 /** A year of check-ins, one square per day, one column per week. */
-export function HabitHeatmap({ heatmap, color }: HabitHeatmapProps) {
-  const columns = buildColumns(heatmap.days, 'MONDAY');
-  const weekdays = WEEKDAYS;
+export function HabitHeatmap({ heatmap, color, weekStart }: HabitHeatmapProps) {
+  const columns = buildColumns(heatmap.days, weekStart);
+  const weekdays = orderedWeekdays(weekStart);
   return (
     <div className="heatmap" style={{ ['--habit-color' as string]: color }}>
       <div className="heatmap-weekdays" aria-hidden="true">

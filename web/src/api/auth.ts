@@ -1,5 +1,5 @@
 import { api } from './client';
-import type { AuthResponse, User } from './types';
+import type { AuthResponse, User, WeekStart } from './types';
 
 export const login = (email: string, password: string) =>
   api.post<AuthResponse>('/api/auth/login', { email, password });
@@ -9,4 +9,5 @@ export const register = (input: { email: string; password: string; name: string 
 
 export const fetchMe = () => api.get<User>('/api/me');
 
-export const updateProfile = (input: { name: string; timeZone: string }) => api.put<User>('/api/me', input);
+export const updateProfile = (input: { name: string; timeZone: string; weekStart: WeekStart }) =>
+  api.put<User>('/api/me', input);

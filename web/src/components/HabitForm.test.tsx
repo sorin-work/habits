@@ -6,7 +6,7 @@ import { habit } from '../test/utils';
 import { HabitForm } from './HabitForm';
 
 function setup(onSubmit = vi.fn().mockResolvedValue(undefined), existing?: ReturnType<typeof habit>) {
-  render(<HabitForm habit={existing} today="2026-03-18" submitLabel="Save" onSubmit={onSubmit} />);
+  render(<HabitForm habit={existing} today="2026-03-18" weekStart="MONDAY" submitLabel="Save" onSubmit={onSubmit} />);
   return onSubmit;
 }
 

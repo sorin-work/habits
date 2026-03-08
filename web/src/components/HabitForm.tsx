@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { ApiError } from '../api/client';
-import type { Habit, HabitInput, ScheduleType } from '../api/types';
+import type { Habit, HabitInput, ScheduleType, WeekStart } from '../api/types';
 import { ColorPicker } from './ColorPicker';
 import { errorText } from './ErrorMessage';
 import { Field } from './Field';
@@ -11,6 +11,7 @@ const DEFAULT_COLOR = '#4f7cff';
 interface HabitFormProps {
   habit?: Habit;
   today: string;
+  weekStart: WeekStart;
   submitLabel: string;
   onSubmit: (input: HabitInput) => Promise<unknown>;
   onCancel?: () => void;
@@ -18,7 +19,7 @@ interface HabitFormProps {
 
 type Errors = Record<string, string>;
 
-export function HabitForm({ habit, today, submitLabel, onSubmit, onCancel }: HabitFormProps) {
+export function HabitForm({ habit, today, weekStart, submitLabel, onSubmit, onCancel }: HabitFormProps) {
   const [name, setName] = useState(habit?.name ?? '');
   const [color, setColor] = useState(habit?.color ?? DEFAULT_COLOR);
   const [type, setType] = useState<ScheduleType>(habit?.schedule.type ?? 'daily');
@@ -125,7 +126,7 @@ export function HabitForm({ habit, today, submitLabel, onSubmit, onCancel }: Hab
         </div>
         {type === 'weekdays' && (
           <>
-            <WeekdayPicker value={days} onChange={setDays} />
+            <WeekdayPicker value={days} onChange={setDays} weekStart={weekStart} />
             {errors['schedule.days'] && <p className="field-error">{errors['schedule.days']}</p>}
           </>
         )}

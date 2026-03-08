@@ -1,3 +1,4 @@
+import type { WeekStart } from '../api/types';
 
 /** Habit days are plain calendar dates ("2026-03-18") in the user's time zone, computed by the API. */
 export function parseDate(iso: string): Date {
@@ -18,6 +19,12 @@ export function addDays(iso: string, days: number): string {
 export function isoWeekday(iso: string): number {
   const day = parseDate(iso).getDay();
   return day === 0 ? 7 : day;
+}
+
+export function startOfWeek(iso: string, weekStart: WeekStart): string {
+  const first = weekStart === 'SUNDAY' ? 7 : 1;
+  const offset = (isoWeekday(iso) - first + 7) % 7;
+  return addDays(iso, -offset);
 }
 
 const fullFormat = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -44,3 +51,8 @@ export const WEEKDAYS = [
   { value: 6, short: 'Sat', initial: 'S' },
   { value: 7, short: 'Sun', initial: 'S' },
 ];
+
+/** Weekdays in display order for the user's week start. */
+export function orderedWeekdays(weekStart: WeekStart) {
+  return weekStart === 'SUNDAY' ? [WEEKDAYS[6], ...WEEKDAYS.slice(0, 6)] : WEEKDAYS;
+}

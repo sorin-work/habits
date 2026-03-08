@@ -1,9 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { createHabit, fetchToday } from '../api/habits';
+import { useUser } from '../auth/AuthContext';
 import { HabitForm } from '../components/HabitForm';
 
 export function NewHabitPage() {
+  const user = useUser();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   // The API knows what "today" is in the user's time zone.
@@ -24,6 +26,7 @@ export function NewHabitPage() {
       <h1>New habit</h1>
       <HabitForm
         today={today.data?.date ?? new Date().toISOString().slice(0, 10)}
+        weekStart={user.weekStart}
         submitLabel="Create habit"
         onSubmit={(input) => create.mutateAsync(input)}
         onCancel={() => navigate(-1)}

@@ -10,6 +10,7 @@ import {
   restoreHabit,
 } from '../api/habits';
 import type { StatsPeriod } from '../api/types';
+import { useUser } from '../auth/AuthContext';
 import { CompletionChart } from '../components/CompletionChart';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { HabitHeatmap } from '../components/HabitHeatmap';
@@ -19,6 +20,7 @@ import { describeSchedule, describeTarget, streakLabel } from '../lib/schedule';
 
 export function HabitDetailPage() {
   const id = Number(useParams().id);
+  const user = useUser();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [period, setPeriod] = useState<StatsPeriod>('week');
@@ -130,7 +132,7 @@ export function HabitDetailPage() {
         ) : heatmap.isError ? (
           <ErrorMessage error={heatmap.error} />
         ) : (
-          <HabitHeatmap heatmap={heatmap.data} color={habit.color} />
+          <HabitHeatmap heatmap={heatmap.data} color={habit.color} weekStart={user.weekStart} />
         )}
       </section>
 
