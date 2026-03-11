@@ -14,3 +14,5 @@ export const updateProfile = (input: { name: string; timeZone: string; weekStart
 
 export const changePassword = (currentPassword: string, newPassword: string) =>
   api.put<void>('/api/me/password', { currentPassword, newPassword });
+
+export const deleteAccount = (password: string) => api.delete('/api/me', { password });

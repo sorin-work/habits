@@ -7,6 +7,7 @@ import io.ktor.server.auth.authenticate
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.put
@@ -35,6 +36,10 @@ fun Route.userRoutes(service: UserService) {
             }
             put("/password") {
                 service.changePassword(call.userId, call.receive())
+                call.respond(HttpStatusCode.NoContent)
+            }
+            delete {
+                service.deleteAccount(call.userId)
                 call.respond(HttpStatusCode.NoContent)
             }
         }

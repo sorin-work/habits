@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState, type FormEvent } from 'react';
-import { changePassword, updateProfile } from '../api/auth';
+import { changePassword, deleteAccount, updateProfile } from '../api/auth';
 import { ApiError } from '../api/client';
 import type { WeekStart } from '../api/types';
 import { useAuth, useUser } from '../auth/AuthContext';
@@ -13,6 +13,7 @@ export function SettingsPage() {
       <h1>Settings</h1>
       <ProfileForm />
       <PasswordForm />
+      <DeleteAccount />
     </div>
   );
 }
@@ -117,6 +118,42 @@ function PasswordForm() {
       <div className="form-actions">
         <button type="submit" className="button" disabled={save.isPending || !current || !next}>
           Change password
+        </button>
+      </div>
+    </form>
+  );
+}
+
+function DeleteAccount() {
+  const { signOut } = useAuth();
+  const [password, setPassword] = useState('');
+  const remove = useMutation({ mutationFn: () => deleteAccount(password), onSuccess: signOut });
+  const fields = remove.error instanceof ApiError ? remove.error.fields : {};
+
+  return (
+    <form
+      className="card form danger-zone"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (window.confirm('Delete your account, all habits and all check-ins? This cannot be undone.')) remove.mutate();
+      }}
+    >
+      <h2>Delete account</h2>
+      <p className="muted">Removes your account and everything in it.</p>
+      <Field label="Confirm with your password" error={fields.password}>
+        {(props) => (
+          <input
+            {...props}
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        )}
+      </Field>
+      <div className="form-actions">
+        <button type="submit" className="button danger" disabled={remove.isPending || !password}>
+          Delete account
         </button>
       </div>
     </form>

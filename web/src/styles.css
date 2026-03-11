@@ -784,4 +784,8 @@ textarea:focus {
   padding: 2rem;
 }
 
+.danger-zone {
+  border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
+}
+
 }

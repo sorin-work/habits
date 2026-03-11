@@ -104,6 +104,11 @@ class UserService(
         users.updatePassword(userId, hasher.hash(request.newPassword))
     }
 
+    suspend fun deleteAccount(userId: Long) {
+        get(userId)
+        users.delete(userId)
+    }
+
     private fun invalidCredentials() =
         ApiException(HttpStatusCode.Unauthorized, "invalid_credentials", "Email or password is incorrect")
 }

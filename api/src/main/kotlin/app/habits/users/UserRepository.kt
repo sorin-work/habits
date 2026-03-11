@@ -5,6 +5,7 @@ import app.habits.db.query
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
@@ -72,6 +73,11 @@ class UserRepository(
     ) = db.query {
         Users.update({ Users.id eq id }) { it[Users.passwordHash] = passwordHash }
     }
+
+    suspend fun delete(id: Long) =
+        db.query {
+            Users.deleteWhere { Users.id eq id }
+        }
 }
 
 private fun ResultRow.toUser() =
