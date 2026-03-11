@@ -104,8 +104,14 @@ class UserService(
         users.updatePassword(userId, hasher.hash(request.newPassword))
     }
 
-    suspend fun deleteAccount(userId: Long) {
-        get(userId)
+    suspend fun deleteAccount(
+        userId: Long,
+        request: DeleteAccountRequest,
+    ) {
+        val user = get(userId)
+        validate {
+            check("password", hasher.verify(request.password, user.passwordHash)) { "Password is incorrect" }
+        }
         users.delete(userId)
     }
 

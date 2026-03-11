@@ -39,7 +39,7 @@ fun Route.userRoutes(service: UserService) {
                 call.respond(HttpStatusCode.NoContent)
             }
             delete {
-                service.deleteAccount(call.userId)
+                service.deleteAccount(call.userId, call.receive())
                 call.respond(HttpStatusCode.NoContent)
             }
         }

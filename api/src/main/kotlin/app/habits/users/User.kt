@@ -69,3 +69,8 @@ data class ChangePasswordRequest(
     val currentPassword: String = "",
     val newPassword: String = "",
 )
+
+@Serializable
+data class DeleteAccountRequest(
+    val password: String = "",
+)
