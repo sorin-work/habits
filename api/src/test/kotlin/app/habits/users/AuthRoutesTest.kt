@@ -74,6 +74,14 @@ class AuthRoutesTest {
         }
 
     @Test
+    fun `login accepts the email in any case`() =
+        apiTest {
+            register("sam@example.com")
+            val response = post("/api/auth/login", mapOf("email" to " Sam@Example.COM", "password" to "correct-horse"))
+            assertEquals(HttpStatusCode.OK, response.status)
+        }
+
+    @Test
     fun `login rejects a wrong password and unknown emails the same way`() =
         apiTest {
             register("sam@example.com")

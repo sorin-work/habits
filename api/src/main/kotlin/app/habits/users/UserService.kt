@@ -60,7 +60,7 @@ class UserService(
     }
 
     suspend fun login(request: LoginRequest): AuthResponse {
-        val email = request.email.trim()
+        val email = normalizeEmail(request.email)
         validate {
             check("email", email.isNotEmpty()) { "Enter your email" }
             check("password", request.password.isNotEmpty()) { "Enter your password" }
