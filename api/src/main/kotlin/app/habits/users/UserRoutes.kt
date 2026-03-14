@@ -4,6 +4,8 @@ import app.habits.auth.AUTH_JWT
 import app.habits.auth.userId
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.authenticate
+import io.ktor.server.plugins.ratelimit.RateLimitName
+import io.ktor.server.plugins.ratelimit.rateLimit
 import io.ktor.server.request.receive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
@@ -13,14 +15,18 @@ import io.ktor.server.routing.post
 import io.ktor.server.routing.put
 import io.ktor.server.routing.route
 
+val AUTH_RATE_LIMIT = RateLimitName("auth")
+
 fun Route.authRoutes(service: UserService) {
-    route("/api/auth") {
-        post("/register") {
-            val response = service.register(call.receive<RegisterRequest>())
-            call.respond(HttpStatusCode.Created, response)
-        }
-        post("/login") {
-            call.respond(service.login(call.receive<LoginRequest>()))
+    rateLimit(AUTH_RATE_LIMIT) {
+        route("/api/auth") {
+            post("/register") {
+                val response = service.register(call.receive<RegisterRequest>())
+                call.respond(HttpStatusCode.Created, response)
+            }
+            post("/login") {
+                call.respond(service.login(call.receive<LoginRequest>()))
+            }
         }
     }
 }

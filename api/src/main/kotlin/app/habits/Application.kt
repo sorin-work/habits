@@ -16,6 +16,7 @@ import app.habits.seed.DemoSeeder
 import app.habits.stats.StatsService
 import app.habits.today.TodayService
 import app.habits.today.todayRoutes
+import app.habits.users.AUTH_RATE_LIMIT
 import app.habits.users.UserRepository
 import app.habits.users.UserService
 import app.habits.users.authRoutes
@@ -31,12 +32,15 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.plugins.origin
+import io.ktor.server.plugins.ratelimit.RateLimit
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.runBlocking
 import org.slf4j.event.Level
 import java.net.URI
 import java.time.Clock
 import java.util.TimeZone
+import kotlin.time.Duration.Companion.minutes
 
 fun main() {
     // Timestamps are stored without a zone; keep the JVM on UTC so they always mean UTC.
@@ -78,6 +82,12 @@ fun Application.module(
         allowHeader(HttpHeaders.ContentType)
         allowMethod(HttpMethod.Put)
         allowMethod(HttpMethod.Delete)
+    }
+    install(RateLimit) {
+        register(AUTH_RATE_LIMIT) {
+            rateLimiter(limit = 10, refillPeriod = 1.minutes)
+            requestKey { it.request.origin.remoteHost }
+        }
     }
     configureErrorHandling()
     configureSecurity(jwt)
