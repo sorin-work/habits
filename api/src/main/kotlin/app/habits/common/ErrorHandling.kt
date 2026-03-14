@@ -50,6 +50,9 @@ fun Application.configureErrorHandling() {
         status(HttpStatusCode.NotFound) { call, status ->
             call.respond(status, ErrorResponse(404, "not_found", "No such endpoint"))
         }
+        status(HttpStatusCode.TooManyRequests) { call, status ->
+            call.respond(status, ErrorResponse(429, "rate_limited", "Too many attempts, try again in a minute"))
+        }
         status(HttpStatusCode.Unauthorized) { call, status ->
             call.respond(status, ErrorResponse(401, "unauthorized", "Authentication required"))
         }
