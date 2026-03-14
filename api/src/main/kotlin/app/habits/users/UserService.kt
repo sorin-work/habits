@@ -33,6 +33,9 @@ class UserService(
     private val jwt: JwtService,
     private val clock: Clock,
 ) {
+    // Compared against when an email is unknown, so a failed login takes as long either way.
+    private val dummyHash by lazy { hasher.hash("not-a-real-password") }
+
     suspend fun register(request: RegisterRequest): AuthResponse {
         val email = normalizeEmail(request.email)
         val name = request.name.trim()
@@ -66,7 +69,11 @@ class UserService(
             check("password", request.password.isNotEmpty()) { "Enter your password" }
         }
         val user = users.findByEmail(email)
-        if (user == null || !hasher.verify(request.password, user.passwordHash)) throw invalidCredentials()
+        if (user == null) {
+            hasher.verify(request.password, dummyHash)
+            throw invalidCredentials()
+        }
+        if (!hasher.verify(request.password, user.passwordHash)) throw invalidCredentials()
         val issued = jwt.issue(user.id)
         return AuthResponse(issued.token, issued.expiresAt, user.toResponse())
     }
