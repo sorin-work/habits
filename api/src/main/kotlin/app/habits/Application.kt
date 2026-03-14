@@ -88,7 +88,7 @@ fun Application.module(
     }
     install(RateLimit) {
         register(AUTH_RATE_LIMIT) {
-            rateLimiter(limit = 10, refillPeriod = 1.minutes)
+            rateLimiter(limit = config.loginRateLimit, refillPeriod = 1.minutes)
             requestKey { it.request.origin.remoteHost }
         }
     }

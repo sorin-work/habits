@@ -53,6 +53,7 @@ fun testConfig(seedDemo: Boolean = false) =
         corsAllowedOrigins = listOf("http://localhost:5173"),
         seedDemo = seedDemo,
         bcryptCost = 4,
+        loginRateLimit = 1000,
     )
 
 class Api(

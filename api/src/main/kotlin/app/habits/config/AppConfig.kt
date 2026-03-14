@@ -22,6 +22,7 @@ data class AppConfig(
     val corsAllowedOrigins: List<String>,
     val seedDemo: Boolean,
     val bcryptCost: Int = 12,
+    val loginRateLimit: Int = 10,
 ) {
     companion object {
         private const val DEV_SECRET = "local-development-secret-change-me-0123456789"
@@ -44,6 +45,7 @@ data class AppConfig(
                         .map { it.trim() }
                         .filter { it.isNotEmpty() },
                 seedDemo = env["SEED_DEMO"]?.trim()?.lowercase() in setOf("true", "1", "yes"),
+                loginRateLimit = env["LOGIN_RATE_LIMIT"]?.toIntOrNull() ?: 10,
             )
         }
 
