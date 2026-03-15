@@ -1,8 +1,9 @@
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { mockFetch } from '../test/utils';
-import { ApiError, api, setToken } from './client';
+import { ApiError, api, onUnauthorized, setToken } from './client';
 
 describe('api client', () => {
+  afterEach(() => onUnauthorized(null));
 
   it('sends the stored token and parses json', async () => {
     setToken('abc');
@@ -26,6 +27,23 @@ describe('api client', () => {
     expect(error).toBeInstanceOf(ApiError);
     expect((error as ApiError).fields).toEqual({ name: 'Required' });
     expect((error as ApiError).code).toBe('validation_failed');
+  });
+
+  it('signs out when a stored token is rejected', async () => {
+    setToken('expired');
+    const handler = vi.fn();
+    onUnauthorized(handler);
+    mockFetch({ '/api/today': () => new Response(JSON.stringify({ error: 'unauthorized', message: 'Expired' }), { status: 401 }) });
+    await expect(api.get('/api/today')).rejects.toBeInstanceOf(ApiError);
+    expect(handler).toHaveBeenCalledOnce();
+  });
+
+  it('does not sign out on a failed login', async () => {
+    const handler = vi.fn();
+    onUnauthorized(handler);
+    mockFetch({ 'POST /api/auth/login': () => new Response(JSON.stringify({ error: 'invalid_credentials' }), { status: 401 }) });
+    await expect(api.post('/api/auth/login', {})).rejects.toBeInstanceOf(ApiError);
+    expect(handler).not.toHaveBeenCalled();
   });
 
   it('returns undefined for 204 responses', async () => {

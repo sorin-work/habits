@@ -12,6 +12,13 @@ export class ApiError extends Error {
   }
 }
 
+let unauthorizedHandler: (() => void) | null = null;
+
+/** Called whenever the API rejects the stored token, e.g. because it expired. */
+export function onUnauthorized(handler: (() => void) | null) {
+  unauthorizedHandler = handler;
+}
+
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY);
 }
@@ -42,6 +49,7 @@ export async function request<T>(method: Method, path: string, body?: unknown): 
 
   if (!response.ok) {
     const error = (data ?? {}) as { error?: string; message?: string; fields?: Record<string, string> };
+    if (response.status === 401 && token) unauthorizedHandler?.();
     throw new ApiError(
       response.status,
       error.error ?? 'http_error',

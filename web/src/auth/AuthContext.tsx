@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { fetchMe } from '../api/auth';
-import { getToken, setToken } from '../api/client';
+import { getToken, onUnauthorized, setToken } from '../api/client';
 import type { AuthResponse, User } from '../api/types';
 
 interface AuthState {
@@ -34,6 +34,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     [queryClient],
   );
+
+  useEffect(() => {
+    onUnauthorized(signOut);
+    return () => onUnauthorized(null);
+  }, [signOut]);
 
   useEffect(() => {
     if (!getToken()) return;
