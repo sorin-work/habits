@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { login } from '../api/auth';
 import { useAuth } from '../auth/AuthContext';
 import { errorText } from '../components/ErrorMessage';
@@ -8,6 +8,7 @@ import { Field } from '../components/Field';
 export function LoginPage() {
   const { signIn } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +20,8 @@ export function LoginPage() {
     setSubmitting(true);
     try {
       signIn(await login(email, password));
-      navigate('/', { replace: true });
+      const from = (location.state as { from?: string } | null)?.from;
+      navigate(from && from !== '/login' ? from : '/', { replace: true });
     } catch (e) {
       setError(errorText(e));
     } finally {
