@@ -804,4 +804,21 @@ textarea:focus {
   border-color: color-mix(in srgb, var(--danger) 40%, var(--border));
 }
 
+@media (max-width: 640px) {
+
+  .stat-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .counter-value {
+    min-width: 3.5rem;
+  }
+
+    flex-wrap: wrap;
+  }
+
 }
