@@ -805,6 +805,16 @@ textarea:focus {
 }
 
 @media (max-width: 640px) {
+  .topbar-inner {
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+  }
+
+  .nav {
+    order: 3;
+    flex-basis: 100%;
+    overflow-x: auto;
+  }
 
   .stat-cards {
     grid-template-columns: repeat(2, 1fr);
