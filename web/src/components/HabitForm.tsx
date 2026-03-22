@@ -1,12 +1,11 @@
 import { useState, type FormEvent } from 'react';
 import { ApiError } from '../api/client';
 import type { Habit, HabitInput, ScheduleType, WeekStart } from '../api/types';
+import { DEFAULT_COLOR } from '../lib/colors';
 import { ColorPicker } from './ColorPicker';
 import { errorText } from './ErrorMessage';
 import { Field } from './Field';
 import { WeekdayPicker } from './WeekdayPicker';
-
-const DEFAULT_COLOR = '#4f7cff';
 
 interface HabitFormProps {
   habit?: Habit;
