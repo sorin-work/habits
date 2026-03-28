@@ -6,6 +6,7 @@ import java.time.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 class HabitValidationTest {
     private val today = LocalDate.of(2026, 3, 18)
@@ -62,5 +63,16 @@ class HabitValidationTest {
         assertFailsWith<ValidationException> { validateReorder(listOf(1, 2), setOf(1, 2, 3)) }
         assertFailsWith<ValidationException> { validateReorder(listOf(1, 1, 2, 3), setOf(1, 2, 3)) }
         assertFailsWith<ValidationException> { validateReorder(listOf(1, 2, 4), setOf(1, 2, 3)) }
+    }
+
+    @Test
+    fun `blank descriptions are stored as null`() {
+        val input =
+            HabitRequest(
+                name = "Stretch",
+                description = "   ",
+                schedule = ScheduleDto("daily"),
+            ).validated(today)
+        assertNull(input.description)
     }
 }

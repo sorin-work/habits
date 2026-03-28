@@ -18,7 +18,7 @@ fun HabitRequest.validated(
     defaultStartDate: LocalDate = today,
 ): HabitInput {
     val name = name.trim()
-    val description = description?.trim()
+    val description = description?.trim()?.ifEmpty { null }
     val unit = unit?.trim()?.ifEmpty { null }
     val color = color?.trim()?.ifEmpty { null } ?: DEFAULT_COLOR
     var schedule: Schedule? = null
