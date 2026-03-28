@@ -20,6 +20,7 @@ type Errors = Record<string, string>;
 
 export function HabitForm({ habit, today, weekStart, submitLabel, onSubmit, onCancel }: HabitFormProps) {
   const [name, setName] = useState(habit?.name ?? '');
+  const [description, setDescription] = useState(habit?.description ?? '');
   const [color, setColor] = useState(habit?.color ?? DEFAULT_COLOR);
   const [type, setType] = useState<ScheduleType>(habit?.schedule.type ?? 'daily');
   const [days, setDays] = useState<number[]>(habit?.schedule.days ?? [1, 3, 5]);
@@ -53,7 +54,7 @@ export function HabitForm({ habit, today, weekStart, submitLabel, onSubmit, onCa
 
     const input: HabitInput = {
       name: name.trim(),
-      description: null,
+      description: description.trim() || null,
       color,
       schedule:
         type === 'daily'
@@ -92,6 +93,17 @@ export function HabitForm({ habit, today, weekStart, submitLabel, onSubmit, onCa
             placeholder="e.g. Drink water"
             onChange={(e) => setName(e.target.value)}
             autoFocus={!habit}
+          />
+        )}
+      </Field>
+      <Field label="Description (optional)" error={errors.description}>
+        {(props) => (
+          <textarea
+            {...props}
+            value={description}
+            maxLength={500}
+            rows={2}
+            onChange={(e) => setDescription(e.target.value)}
           />
         )}
       </Field>

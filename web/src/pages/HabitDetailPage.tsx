@@ -65,6 +65,7 @@ export function HabitDetailPage() {
             {target && ` · ${target} a day`} · since {formatLong(habit.startDate)}
             {habit.archived && ' · archived'}
           </p>
+          {habit.description && <p>{habit.description}</p>}
         </div>
         <div className="header-actions">
           <Link to={`/habits/${habit.id}/edit`} className="button">
