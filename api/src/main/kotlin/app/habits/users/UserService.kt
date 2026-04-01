@@ -58,8 +58,7 @@ class UserService(
                 timeZone = zone ?: ZoneId.of("UTC"),
                 createdAt = clock.instant(),
             )
-        val issued = jwt.issue(user.id)
-        return AuthResponse(issued.token, issued.expiresAt, user.toResponse())
+        return authResponse(user)
     }
 
     suspend fun login(request: LoginRequest): AuthResponse {
@@ -74,8 +73,7 @@ class UserService(
             throw invalidCredentials()
         }
         if (!hasher.verify(request.password, user.passwordHash)) throw invalidCredentials()
-        val issued = jwt.issue(user.id)
-        return AuthResponse(issued.token, issued.expiresAt, user.toResponse())
+        return authResponse(user)
     }
 
     suspend fun get(userId: Long): User = users.findById(userId) ?: throw UnauthorizedException()
@@ -120,6 +118,11 @@ class UserService(
             check("password", hasher.verify(request.password, user.passwordHash)) { "Password is incorrect" }
         }
         users.delete(userId)
+    }
+
+    private fun authResponse(user: User): AuthResponse {
+        val issued = jwt.issue(user.id)
+        return AuthResponse(issued.token, issued.expiresAt, user.toResponse())
     }
 
     private fun invalidCredentials() =
