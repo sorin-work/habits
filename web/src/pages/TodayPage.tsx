@@ -1,17 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { deleteCheckIn, fetchToday, saveCheckIn } from '../api/habits';
 import type { TodayHabit } from '../api/types';
 import { CheckInControl } from '../components/CheckInControl';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { NoteEditor } from '../components/NoteEditor';
+import { addDays, relativeDay } from '../lib/dates';
 import { describeSchedule, streakLabel } from '../lib/schedule';
 
 type SaveInput = { habitId: number; date: string; value?: number; note?: string | null };
 
 export function TodayPage() {
   const queryClient = useQueryClient();
-  const query = useQuery({ queryKey: ['today'], queryFn: () => fetchToday() });
+  const [params, setParams] = useSearchParams();
+  const date = params.get('date') ?? undefined;
+  const query = useQuery({ queryKey: ['today', date ?? 'current'], queryFn: () => fetchToday(date) });
 
   const refresh = (habitId: number) => {
     void queryClient.invalidateQueries({ queryKey: ['today'] });
@@ -31,6 +34,8 @@ export function TodayPage() {
   if (query.isError) return <ErrorMessage error={query.error} retry={() => void query.refetch()} />;
 
   const data = query.data;
+  const isToday = data.date === data.today;
+  const goTo = (day: string) => setParams(day === data.today ? {} : { date: day });
   const busy = save.isPending || clear.isPending;
   const error = save.error ?? clear.error;
 
@@ -78,12 +83,30 @@ export function TodayPage() {
     <div className="page today-page">
       <div className="page-header">
         <div>
-          <h1>Today</h1>
+          <h1>{relativeDay(data.date, data.today)}</h1>
           {data.dueCount > 0 && (
             <p className="muted">
               {`${data.completedCount} of ${data.dueCount} done`}
             </p>
           )}
+        </div>
+        <div className="day-nav">
+          <button type="button" className="button" onClick={() => goTo(addDays(data.date, -1))} aria-label="Previous day">
+            ←
+          </button>
+          {!isToday && (
+            <button type="button" className="button" onClick={() => goTo(data.today)}>
+              Today
+            </button>
+          )}
+          <button
+            type="button"
+            className="button"
+            onClick={() => goTo(addDays(data.date, 1))}
+            aria-label="Next day"
+          >
+            →
+          </button>
         </div>
       </div>
 

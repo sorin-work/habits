@@ -82,6 +82,7 @@ export interface TodayHabit {
 
 export interface TodayResponse {
   date: string;
+  today: string;
   habits: TodayHabit[];
   dueCount: number;
   completedCount: number;

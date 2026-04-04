@@ -25,7 +25,7 @@ export function NewHabitPage() {
     <div className="page narrow">
       <h1>New habit</h1>
       <HabitForm
-        today={today.data?.date ?? new Date().toISOString().slice(0, 10)}
+        today={today.data?.today ?? new Date().toISOString().slice(0, 10)}
         weekStart={user.weekStart}
         submitLabel="Create habit"
         onSubmit={(input) => create.mutateAsync(input)}
