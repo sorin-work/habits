@@ -103,6 +103,7 @@ export function TodayPage() {
             type="button"
             className="button"
             onClick={() => goTo(addDays(data.date, 1))}
+            disabled={isToday}
             aria-label="Next day"
           >
             →
