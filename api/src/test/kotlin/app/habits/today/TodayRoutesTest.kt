@@ -96,4 +96,15 @@ class TodayRoutesTest {
                 put("/api/habits/$other/checkins/2026-03-19", mapOf<String, Any>(), utc).status,
             )
         }
+
+    @Test
+    fun `can look at a past day but not a future one`() =
+        apiTest {
+            val token = register()
+            createHabit(token, dailyHabit("Read"))
+            val past = get("/api/today?date=2026-03-10", token).obj()
+            assertEquals("2026-03-10", past["date"]!!.str)
+            assertEquals("2026-03-18", past["today"]!!.str)
+            assertEquals(HttpStatusCode.BadRequest, get("/api/today?date=2026-03-19", token).status)
+        }
 }
