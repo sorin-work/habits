@@ -5,6 +5,7 @@ import type { TodayHabit } from '../api/types';
 import { CheckInControl } from '../components/CheckInControl';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { NoteEditor } from '../components/NoteEditor';
+import { ProgressBar } from '../components/ProgressBar';
 import { addDays, relativeDay } from '../lib/dates';
 import { describeSchedule, streakLabel } from '../lib/schedule';
 
@@ -111,6 +112,7 @@ export function TodayPage() {
         </div>
       </div>
 
+      {data.dueCount > 0 && <ProgressBar value={data.completedCount} max={data.dueCount} label="Today's progress" />}
       {error && <ErrorMessage error={error} />}
 
       {data.habits.length === 0 ? (
