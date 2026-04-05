@@ -37,6 +37,8 @@ export function TodayPage() {
   const data = query.data;
   const isToday = data.date === data.today;
   const goTo = (day: string) => setParams(day === data.today ? {} : { date: day });
+  const due = data.habits.filter((h) => h.due);
+  const notDue = data.habits.filter((h) => !h.due);
   const busy = save.isPending || clear.isPending;
   const error = save.error ?? clear.error;
 
@@ -119,7 +121,13 @@ export function TodayPage() {
         <p className="muted">No habits yet. Add one from the Habits page.</p>
       ) : (
         <>
-          <ul className="today-list">{data.habits.map(renderItem)}</ul>
+          <ul className="today-list">{due.map(renderItem)}</ul>
+          {notDue.length > 0 && (
+            <section className="not-due">
+              <h2>Not due {isToday ? 'today' : 'this day'}</h2>
+              <ul className="today-list">{notDue.map(renderItem)}</ul>
+            </section>
+          )}
         </>
       )}
     </div>

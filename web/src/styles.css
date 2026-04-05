@@ -541,6 +541,17 @@ textarea:focus {
   min-width: 0;
 }
 
+.not-due h2 {
+  font-size: 0.95rem;
+  color: var(--muted);
+  margin: 1rem 0 0.5rem;
+}
+
+.not-due .today-item {
+  opacity: 0.8;
+  box-shadow: none;
+}
+
 .check-button {
   width: 2.4rem;
   height: 2.4rem;
