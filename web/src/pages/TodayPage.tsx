@@ -89,7 +89,9 @@ export function TodayPage() {
           <h1>{relativeDay(data.date, data.today)}</h1>
           {data.dueCount > 0 && (
             <p className="muted">
-              {`${data.completedCount} of ${data.dueCount} done`}
+              {data.completedCount === data.dueCount
+                ? 'All done. Nice work!'
+                : `${data.completedCount} of ${data.dueCount} done`}
             </p>
           )}
         </div>
