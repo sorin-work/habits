@@ -59,10 +59,11 @@ class TodayService(
         }
 
         val active = habits.list(user.id, archived = false).filter { !it.startDate.isAfter(date) }
+        val history = checkIns.forHabits(active.map { it.id }, date)
 
         val items =
             active.map { habit ->
-                val entries = checkIns.all(habit.id)
+                val entries = history[habit.id].orEmpty()
                 val entry = entries.lastOrNull { it.day == date }
                 val completed = StatsService.completedDays(habit, entries)
                 val doneToday = entry != null && habit.isComplete(entry.value)
