@@ -49,6 +49,15 @@ class TodayRoutesTest {
             assertEquals(false, body.byName("Swim").due)
             assertEquals(true, body.byName("Gym").due)
             assertEquals(2, body["dueCount"]!!.int)
+
+            // Once the weekly goal is met on other days it's no longer due today.
+            put("/api/habits/$gym/checkins/2026-03-16", mapOf<String, Any>(), token)
+            put("/api/habits/$gym/checkins/2026-03-17", mapOf<String, Any>(), token)
+            body = get("/api/today", token).obj()
+            assertEquals(false, body.byName("Gym").due)
+            val week = body.byName("Gym")["week"] as JsonObject
+            assertEquals(2, week["done"]!!.int)
+            assertEquals(2, week["goal"]!!.int)
         }
 
     @Test

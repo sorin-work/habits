@@ -6,6 +6,7 @@ import app.habits.common.LocalDateSerializer
 import app.habits.common.today
 import app.habits.habits.HabitRepository
 import app.habits.habits.HabitResponse
+import app.habits.habits.Schedule
 import app.habits.habits.toResponse
 import app.habits.stats.StatsService
 import app.habits.stats.StreakCalculator
@@ -66,7 +67,11 @@ class TodayService(
                 val completed = StatsService.completedDays(habit, entries)
                 val doneToday = entry != null && habit.isComplete(entry.value)
                 val week = StatsService.weekProgress(habit, completed, date, user.weekStart)
-                val due = habit.schedule.isScheduledOn(date)
+                val due =
+                    when (habit.schedule) {
+                        is Schedule.TimesPerWeek -> doneToday || (week != null && week.done < week.goal)
+                        else -> habit.schedule.isScheduledOn(date)
+                    }
                 TodayHabit(
                     habit = habit.toResponse(),
                     due = due,
