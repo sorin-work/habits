@@ -33,6 +33,7 @@ fun HabitRequest.validated(
         check("unit", unit == null || target != null) { "A unit needs a target" }
         val start = startDate ?: defaultStartDate
         check("startDate", !start.isBefore(LocalDate.of(2000, 1, 1))) { "Start date is too far in the past" }
+        check("startDate", !start.isAfter(today.plusYears(1))) { "Start date can be at most a year ahead" }
     }
     return HabitInput(
         name = name,

@@ -64,6 +64,13 @@ class HabitValidationTest {
     }
 
     @Test
+    fun `start dates can be at most a year ahead`() {
+        val fields =
+            errors(HabitRequest("Later", schedule = ScheduleDto("daily"), startDate = today.plusYears(1).plusDays(1)))
+        assertEquals(setOf("startDate"), fields.keys)
+    }
+
+    @Test
     fun `reorder needs every active habit exactly once`() {
         validateReorder(listOf(3, 1, 2), setOf(1, 2, 3))
         assertFailsWith<ValidationException> { validateReorder(listOf(1, 2), setOf(1, 2, 3)) }
