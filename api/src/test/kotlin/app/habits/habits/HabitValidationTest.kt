@@ -51,6 +51,10 @@ class HabitValidationTest {
             errors(HabitRequest("Run", schedule = ScheduleDto("weekdays", days = listOf(1, 8)))).keys,
         )
         assertEquals(
+            setOf("schedule.days"),
+            errors(HabitRequest("Run", schedule = ScheduleDto("weekdays", days = listOf(2, 2)))).keys,
+        )
+        assertEquals(
             setOf("schedule.timesPerWeek"),
             errors(HabitRequest("Gym", schedule = ScheduleDto("weekly", timesPerWeek = 8))).keys,
         )

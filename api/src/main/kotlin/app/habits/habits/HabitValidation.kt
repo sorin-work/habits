@@ -62,6 +62,11 @@ private fun Validator.parseSchedule(dto: ScheduleDto?): Schedule? {
                         "schedule.days",
                         "Days are numbered 1 (Monday) to 7 (Sunday)",
                     ).let { null }
+                days.size != days.toSet().size ->
+                    error(
+                        "schedule.days",
+                        "Each day can only be picked once",
+                    ).let { null }
                 else -> Schedule.Weekdays(days.map { DayOfWeek.of(it) }.toSet())
             }
         }
