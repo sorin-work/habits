@@ -30,6 +30,7 @@ fun HabitRequest.validated(
         schedule = parseSchedule(this@validated.schedule)
         check("target", target == null || target in 1..MAX_TARGET) { "Target must be between 1 and $MAX_TARGET" }
         check("unit", (unit?.length ?: 0) <= 20) { "Unit must be at most 20 characters" }
+        check("unit", unit == null || target != null) { "A unit needs a target" }
         val start = startDate ?: defaultStartDate
         check("startDate", !start.isBefore(LocalDate.of(2000, 1, 1))) { "Start date is too far in the past" }
     }

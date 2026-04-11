@@ -58,6 +58,12 @@ class HabitValidationTest {
     }
 
     @Test
+    fun `a unit needs a target`() {
+        val fields = errors(HabitRequest("Water", schedule = ScheduleDto("daily"), unit = "glasses"))
+        assertEquals(setOf("unit"), fields.keys)
+    }
+
+    @Test
     fun `reorder needs every active habit exactly once`() {
         validateReorder(listOf(3, 1, 2), setOf(1, 2, 3))
         assertFailsWith<ValidationException> { validateReorder(listOf(1, 2), setOf(1, 2, 3)) }
