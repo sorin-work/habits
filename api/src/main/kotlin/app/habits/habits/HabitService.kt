@@ -16,6 +16,8 @@ import io.ktor.http.HttpStatusCode
 import java.time.Clock
 import java.time.LocalDate
 
+const val MAX_ACTIVE_HABITS = 50
+
 class HabitService(
     private val habits: HabitRepository,
     private val checkIns: CheckInRepository,
@@ -36,6 +38,9 @@ class HabitService(
         request: HabitRequest,
     ): Habit {
         val input = request.validated(clock.today(user.timeZone))
+        if (habits.list(user.id, archived = false).size >= MAX_ACTIVE_HABITS) {
+            throw ConflictException("habit_limit", "You can have at most $MAX_ACTIVE_HABITS active habits")
+        }
         return habits.create(user.id, input, clock.instant())
     }
 
