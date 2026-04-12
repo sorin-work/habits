@@ -77,6 +77,9 @@ class HabitService(
     ): Habit {
         val habit = get(user, id)
         if (habit.archived) {
+            if (habits.list(user.id, archived = false).size >= MAX_ACTIVE_HABITS) {
+                throw ConflictException("habit_limit", "You can have at most $MAX_ACTIVE_HABITS active habits")
+            }
             habits.setArchived(user.id, id, null, clock.instant())
         }
         return get(user, id)
