@@ -163,6 +163,22 @@ class HabitRoutesTest {
         }
 
     @Test
+    fun `only 50 habits can be active at once`() =
+        apiTest {
+            val token = register()
+            repeat(MAX_ACTIVE_HABITS) { createHabit(token, dailyHabit("Habit $it")) }
+            val response = post("/api/habits", dailyHabit("One too many"), token)
+            assertEquals(HttpStatusCode.Conflict, response.status)
+            assertEquals("habit_limit", response.obj()["error"]!!.str)
+
+            // Archiving one makes room again.
+            val habits = get("/api/habits", token).arr()
+            val first = habits.first().jsonObject["id"]!!.int
+            post("/api/habits/$first/archive", token = token)
+            assertEquals(HttpStatusCode.Created, post("/api/habits", dailyHabit("Now it fits"), token).status)
+        }
+
+    @Test
     fun `the web dev server may send put requests`() =
         apiTest {
             val response =
