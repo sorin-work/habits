@@ -96,13 +96,10 @@ class StatsService(
                     totals[index] = totals[index] + completion.capped()
                 }
                 if (habit.schedule !is Schedule.TimesPerWeek) {
-                    var day = latest(weekdayFrom, habit.startDate)
-                    while (day.isBefore(today)) {
-                        if (habit.schedule.isScheduledOn(day)) {
-                            val done = if (day in completed) 1 else 0
-                            weekdayTotals[day.dayOfWeek] = weekdayTotals.getValue(day.dayOfWeek) + Completion(1, done)
-                        }
-                        day = day.plusDays(1)
+                    for (day in daysBetween(latest(weekdayFrom, habit.startDate), today.minusDays(1))) {
+                        if (!habit.schedule.isScheduledOn(day)) continue
+                        val done = if (day in completed) 1 else 0
+                        weekdayTotals[day.dayOfWeek] = weekdayTotals.getValue(day.dayOfWeek) + Completion(1, done)
                     }
                 }
                 val streaks =
