@@ -104,7 +104,7 @@ class HabitService(
         val habit = get(user, id)
         checkDate(user, habit, date)
         val note = request.note?.trim()?.ifEmpty { null }
-        val value = request.value ?: 1
+        val value = request.value ?: habit.dailyGoal
         validate {
             check("value", value in 1..MAX_CHECK_IN_VALUE) { "Value must be between 1 and $MAX_CHECK_IN_VALUE" }
             check("note", (note?.length ?: 0) <= MAX_NOTE_LENGTH) {

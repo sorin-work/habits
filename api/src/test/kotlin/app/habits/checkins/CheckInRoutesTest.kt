@@ -39,6 +39,19 @@ class CheckInRoutesTest {
         }
 
     @Test
+    fun `checking in without a value completes the day`() =
+        apiTest {
+            val token = register()
+            val id = createHabit(token, dailyHabit("Water", target = 8))
+            val response = put("/api/habits/$id/checkins/2026-03-18", mapOf("note" to "  felt good "), token)
+            assertEquals(HttpStatusCode.OK, response.status)
+            val body = response.obj()
+            assertEquals(8, body["value"]!!.int)
+            assertEquals("felt good", body["note"]!!.str)
+            assertEquals(true, body["completed"]!!.jsonPrimitive.content.toBoolean())
+        }
+
+    @Test
     fun `future days and days before the start are rejected`() =
         apiTest {
             val token = register()
