@@ -53,6 +53,17 @@ export function CheckInControl({ habit, value, completed, disabled, onSet, onCle
       >
         +
       </button>
+      {!completed && (
+        <button
+          type="button"
+          className="button small"
+          disabled={disabled}
+          onClick={() => onSet(habit.target!)}
+          aria-label={`Complete ${habit.name}`}
+        >
+          Done
+        </button>
+      )}
     </div>
   );
 }

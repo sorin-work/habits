@@ -38,5 +38,14 @@ describe('CheckInControl', () => {
     expect(onSet).toHaveBeenLastCalledWith(6);
     await userEvent.click(screen.getByRole('button', { name: 'Decrease Water' }));
     expect(onSet).toHaveBeenLastCalledWith(4);
+    await userEvent.click(screen.getByRole('button', { name: 'Complete Water' }));
+    expect(onSet).toHaveBeenLastCalledWith(8);
+  });
+
+  it('hides the done shortcut once the target is reached', () => {
+    render(
+      <CheckInControl habit={{ name: 'Water', target: 8, unit: null }} value={8} completed onSet={vi.fn()} onClear={vi.fn()} />,
+    );
+    expect(screen.queryByRole('button', { name: 'Complete Water' })).not.toBeInTheDocument();
   });
 });
