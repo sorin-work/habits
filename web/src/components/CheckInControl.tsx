@@ -27,7 +27,11 @@ export function CheckInControl({ habit, value, completed, disabled, onSet, onCle
     );
   }
 
-  const step = (delta: number) => onSet(Math.max(0, value + delta));
+  const step = (delta: number) => {
+    const next = Math.max(0, value + delta);
+    if (next === 0) onClear();
+    else onSet(next);
+  };
 
   return (
     <div className="counter">

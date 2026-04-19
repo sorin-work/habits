@@ -42,6 +42,17 @@ describe('CheckInControl', () => {
     expect(onSet).toHaveBeenLastCalledWith(8);
   });
 
+  it('clears the check-in when counting down to zero', async () => {
+    const onSet = vi.fn();
+    const onClear = vi.fn();
+    render(
+      <CheckInControl habit={{ name: 'Water', target: 8, unit: null }} value={1} completed={false} onSet={onSet} onClear={onClear} />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Decrease Water' }));
+    expect(onClear).toHaveBeenCalled();
+    expect(onSet).not.toHaveBeenCalled();
+  });
+
   it('hides the done shortcut once the target is reached', () => {
     render(
       <CheckInControl habit={{ name: 'Water', target: 8, unit: null }} value={8} completed onSet={vi.fn()} onClear={vi.fn()} />,
