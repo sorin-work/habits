@@ -34,6 +34,14 @@ export const saveCheckIn = (habitId: number, date: string, input: { value?: numb
 
 export const deleteCheckIn = (habitId: number, date: string) => api.delete(`/api/habits/${habitId}/checkins/${date}`);
 
+export const listCheckIns = (habitId: number, from?: string, to?: string) => {
+  const params = new URLSearchParams();
+  if (from) params.set('from', from);
+  if (to) params.set('to', to);
+  const query = params.toString();
+  return api.get<CheckIn[]>(`/api/habits/${habitId}/checkins${query ? `?${query}` : ''}`);
+};
+
 export const fetchHeatmap = (habitId: number) => api.get<Heatmap>(`/api/habits/${habitId}/heatmap`);
 
 export const fetchHabitStats = (habitId: number, period: StatsPeriod, count = 12) =>

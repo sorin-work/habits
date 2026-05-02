@@ -618,6 +618,16 @@ textarea:focus {
   gap: 0.4rem;
 }
 
+.note-list li {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.note-list p {
+  margin: 0.1rem 0 0;
+  white-space: pre-wrap;
+}
+
 .progress {
   height: 8px;
   background: var(--surface-2);

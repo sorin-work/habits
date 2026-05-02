@@ -7,6 +7,7 @@ import {
   fetchHabit,
   fetchHabitStats,
   fetchHeatmap,
+  listCheckIns,
   restoreHabit,
 } from '../api/habits';
 import type { StatsPeriod } from '../api/types';
@@ -28,6 +29,7 @@ export function HabitDetailPage() {
   const detail = useQuery({ queryKey: ['habit', id], queryFn: () => fetchHabit(id) });
   const heatmap = useQuery({ queryKey: ['habit', id, 'heatmap'], queryFn: () => fetchHeatmap(id) });
   const stats = useQuery({ queryKey: ['habit', id, 'stats', period], queryFn: () => fetchHabitStats(id, period) });
+  const checkIns = useQuery({ queryKey: ['habit', id, 'checkins'], queryFn: () => listCheckIns(id) });
 
   const afterChange = () => {
     void queryClient.invalidateQueries({ queryKey: ['habit', id] });
@@ -52,6 +54,7 @@ export function HabitDetailPage() {
 
   const { habit, summary } = detail.data;
   const target = describeTarget(habit);
+  const notes = (checkIns.data ?? []).filter((c) => c.note);
 
   return (
     <div className="page habit-detail" style={{ ['--habit-color' as string]: habit.color }}>
@@ -154,6 +157,22 @@ export function HabitDetailPage() {
           <ErrorMessage error={stats.error} />
         ) : (
           <CompletionChart buckets={stats.data.buckets} period={period} color={habit.color} />
+        )}
+      </section>
+
+      <section className="card">
+        <h2>Notes</h2>
+        {notes.length === 0 ? (
+          <p className="muted">No notes in the last 90 days. Add one from the Today page after checking in.</p>
+        ) : (
+          <ul className="note-list">
+            {notes.map((c) => (
+              <li key={c.date}>
+                <span className="muted small">{formatLong(c.date)}</span>
+                <p>{c.note}</p>
+              </li>
+            ))}
+          </ul>
         )}
       </section>
     </div>
