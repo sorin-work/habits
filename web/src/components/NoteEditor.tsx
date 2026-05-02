@@ -9,7 +9,9 @@ interface NoteEditorProps {
 /** Shows a day's note and lets the user add or change it. */
 export function NoteEditor({ note, disabled, onSave }: NoteEditorProps) {
   const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(note ?? '');
+  // The draft is only taken from props when editing starts, so a background refetch
+  // can't wipe out what the user is typing.
+  const [draft, setDraft] = useState('');
   const [saving, setSaving] = useState(false);
 
   if (!editing) {
@@ -20,7 +22,10 @@ export function NoteEditor({ note, disabled, onSave }: NoteEditorProps) {
           type="button"
           className="link-button"
           disabled={disabled}
-          onClick={() => setEditing(true)}
+          onClick={() => {
+            setDraft(note ?? '');
+            setEditing(true);
+          }}
         >
           {note ? 'Edit note' : 'Add note'}
         </button>

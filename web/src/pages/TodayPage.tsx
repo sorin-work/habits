@@ -72,7 +72,6 @@ export function TodayPage() {
         </div>
         {item.value > 0 && (
           <NoteEditor
-            key={`${habit.id}-${item.note ?? ''}`}
             note={item.note}
             disabled={busy}
             onSave={(note) => save.mutateAsync({ habitId: habit.id, date: data.date, value: item.value, note })}
