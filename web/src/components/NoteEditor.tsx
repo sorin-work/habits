@@ -52,6 +52,10 @@ export function NoteEditor({ note, disabled, onSave }: NoteEditorProps) {
         rows={2}
         autoFocus
         onChange={(e) => setDraft(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape') setEditing(false);
+          if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) void save();
+        }}
       />
       <div className="note-actions">
         <button type="button" className="button small primary" disabled={saving} onClick={() => void save()}>
@@ -60,6 +64,7 @@ export function NoteEditor({ note, disabled, onSave }: NoteEditorProps) {
         <button type="button" className="button small" onClick={() => setEditing(false)}>
           Cancel
         </button>
+        <span className="muted small">{draft.length}/500</span>
       </div>
     </div>
   );
