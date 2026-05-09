@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.2.10"
-    kotlin("plugin.serialization") version "2.2.10"
+    kotlin("jvm") version "2.2.21"
+    kotlin("plugin.serialization") version "2.2.21"
     id("org.jlleitschuh.gradle.ktlint") version "13.1.0"
     application
 }
@@ -9,8 +9,8 @@ group = "app.habits"
 version = "0.1.0"
 
 val ktorVersion = "3.3.0"
-val exposedVersion = "0.60.0"
-val flywayVersion = "11.10.0"
+val exposedVersion = "0.61.0"
+val flywayVersion = "11.13.0"
 
 repositories {
     mavenCentral()
