@@ -24,7 +24,7 @@ export function SignupPage() {
     setSubmitting(true);
     try {
       signIn(await register({ name, email, password }));
-      navigate('/', { replace: true });
+      navigate('/habits/new', { replace: true });
     } catch (e) {
       if (e instanceof ApiError && Object.keys(e.fields).length > 0) setErrors(e.fields);
       else setError(errorText(e));
