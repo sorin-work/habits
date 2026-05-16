@@ -83,4 +83,10 @@ describe('TodayPage', () => {
     expect(calls.map((c) => c.path)).toContain('/api/today?date=2026-03-17');
     expect(screen.getByRole('button', { name: 'Today' })).toBeInTheDocument();
   });
+
+  it('invites new users to add a habit', async () => {
+    mockFetch({ '/api/today': today({ habits: [], dueCount: 0, completedCount: 0 }) });
+    renderWithProviders(<TodayPage />);
+    expect(await screen.findByRole('link', { name: 'Add your first habit' })).toHaveAttribute('href', '/habits/new');
+  });
 });

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router';
 import { deleteCheckIn, fetchToday, saveCheckIn } from '../api/habits';
 import type { TodayHabit } from '../api/types';
 import { CheckInControl } from '../components/CheckInControl';
+import { EmptyState } from '../components/EmptyState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { NoteEditor } from '../components/NoteEditor';
 import { ProgressBar } from '../components/ProgressBar';
@@ -119,7 +120,12 @@ export function TodayPage() {
       {error && <ErrorMessage error={error} />}
 
       {data.habits.length === 0 ? (
-        <p className="muted">No habits yet. Add one from the Habits page.</p>
+        <EmptyState title="No habits yet">
+          <p>Start with something small you want to do every day.</p>
+          <Link to="/habits/new" className="button primary">
+            Add your first habit
+          </Link>
+        </EmptyState>
       ) : (
         <>
           <ul className="today-list">{due.map(renderItem)}</ul>

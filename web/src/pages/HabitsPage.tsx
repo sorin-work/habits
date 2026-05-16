@@ -77,7 +77,11 @@ export function HabitsPage() {
             <p>Archive a habit you've stopped to keep its history without seeing it every day.</p>
           </EmptyState>
         ) : (
-          <p className="muted">No habits yet.</p>
+          <EmptyState title="No habits yet">
+            <Link to="/habits/new" className="button primary">
+              Add your first habit
+            </Link>
+          </EmptyState>
         )
       ) : (
         <ul className="habit-list">
