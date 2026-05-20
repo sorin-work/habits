@@ -56,3 +56,12 @@ export const WEEKDAYS = [
 export function orderedWeekdays(weekStart: WeekStart) {
   return weekStart === 'SUNDAY' ? [WEEKDAYS[6], ...WEEKDAYS.slice(0, 6)] : WEEKDAYS;
 }
+
+/** The browser's IANA time zone, used as the default when signing up. */
+export function browserTimeZone(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+  } catch {
+    return 'UTC';
+  }
+}

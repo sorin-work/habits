@@ -5,6 +5,7 @@ import { ApiError } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { errorText } from '../components/ErrorMessage';
 import { Field } from '../components/Field';
+import { browserTimeZone } from '../lib/dates';
 
 export function SignupPage() {
   const { signIn } = useAuth();
@@ -23,7 +24,7 @@ export function SignupPage() {
 
     setSubmitting(true);
     try {
-      signIn(await register({ name, email, password }));
+      signIn(await register({ name, email, password, timeZone: browserTimeZone() }));
       navigate('/habits/new', { replace: true });
     } catch (e) {
       if (e instanceof ApiError && Object.keys(e.fields).length > 0) setErrors(e.fields);
