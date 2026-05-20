@@ -20,7 +20,11 @@ export function SignupPage() {
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     setError(null);
-    setErrors({});
+    const found: Record<string, string> = {};
+    if (!name.trim()) found.name = 'Enter your name';
+    if (password.length < 8) found.password = 'Password must be at least 8 characters';
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
 
     setSubmitting(true);
     try {
