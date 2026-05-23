@@ -48,6 +48,7 @@ fun testConfig(seedDemo: Boolean = false) =
                         "DEFAULT_NULL_ORDERING=HIGH;NON_KEYWORDS=DAY,VALUE;DB_CLOSE_DELAY=-1",
                 user = "sa",
                 password = "",
+                maxPoolSize = 2,
             ),
         jwt = JwtConfig(secret = "test-secret-that-is-long-enough-for-hmac-256"),
         corsAllowedOrigins = listOf("http://localhost:5173"),

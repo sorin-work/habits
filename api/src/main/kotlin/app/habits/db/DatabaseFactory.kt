@@ -18,7 +18,7 @@ object DatabaseFactory {
                 jdbcUrl = config.url
                 username = config.user
                 password = config.password
-                maximumPoolSize = 10
+                maximumPoolSize = config.maxPoolSize
                 isAutoCommit = false
                 transactionIsolation = "TRANSACTION_READ_COMMITTED"
                 validate()

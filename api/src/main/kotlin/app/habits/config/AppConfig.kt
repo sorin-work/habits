@@ -6,6 +6,7 @@ data class DatabaseConfig(
     val url: String,
     val user: String,
     val password: String,
+    val maxPoolSize: Int = 10,
 )
 
 data class JwtConfig(
@@ -37,6 +38,7 @@ data class AppConfig(
                         url = env["DATABASE_URL"] ?: "jdbc:postgresql://localhost:5443/habits",
                         user = env["DATABASE_USER"] ?: "habits",
                         password = env["DATABASE_PASSWORD"] ?: "habits",
+                        maxPoolSize = env["DATABASE_POOL_SIZE"]?.toIntOrNull() ?: 10,
                     ),
                 jwt = JwtConfig(secret = secret, ttl = parseDuration(env["JWT_TTL"] ?: "7d")),
                 corsAllowedOrigins =
