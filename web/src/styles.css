@@ -11,6 +11,7 @@
   --success: #2e9d62;
   --empty-cell: #e7e9f0;
   --radius: 10px;
+  --shadow: 0 1px 2px rgb(20 24 40 / 6%), 0 2px 8px rgb(20 24 40 / 4%);
   --habit-color: var(--accent);
 
   color-scheme: light dark;
@@ -37,6 +38,7 @@
     --muted: #9aa1b4;
     --accent: #6d93ff;
     --empty-cell: #2a2f3c;
+    --shadow: none;
   }
 }
 
@@ -182,6 +184,7 @@ a {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow);
   padding: 1rem 1.25rem;
 }
 
@@ -524,6 +527,7 @@ textarea:focus {
   border-left: 4px solid var(--habit-color);
   border-radius: var(--radius);
   padding: 0.75rem 1rem;
+  box-shadow: var(--shadow);
 }
 
 .today-item.completed {
@@ -833,6 +837,7 @@ textarea:focus {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 2rem;
+  box-shadow: var(--shadow);
 }
 
 .danger-zone {
