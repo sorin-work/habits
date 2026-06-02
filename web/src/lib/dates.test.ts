@@ -8,6 +8,12 @@ describe('dates', () => {
     expect(addDays('2026-03-01', -1)).toBe('2026-02-28');
   });
 
+  it('keeps calendar dates stable across DST changes', () => {
+    // Europe switches to summer time on 29 March 2026.
+    expect(addDays('2026-03-28', 1)).toBe('2026-03-29');
+    expect(addDays('2026-03-29', 1)).toBe('2026-03-30');
+  });
+
   it('finds the start of the week for either week start', () => {
     expect(startOfWeek('2026-03-18', 'MONDAY')).toBe('2026-03-16');
     expect(startOfWeek('2026-03-18', 'SUNDAY')).toBe('2026-03-15');

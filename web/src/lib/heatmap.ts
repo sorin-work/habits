@@ -29,7 +29,7 @@ export function buildColumns(days: HeatmapDay[], weekStart: WeekStart): HeatmapC
   for (const column of columns) {
     const firstDay = column.days.find((d) => d !== null);
     if (!firstDay) continue;
-    const month = parseDate(firstDay.date).getMonth();
+    const month = parseDate(firstDay.date).getUTCMonth();
     if (month !== lastMonth) {
       column.label = formatMonth(firstDay.date);
       lastMonth = month;

@@ -1,8 +1,13 @@
 import type { WeekStart } from '../api/types';
 
-/** Habit days are plain calendar dates ("2026-03-18") in the user's time zone, computed by the API. */
+/*
+ * Habit days are plain calendar dates ("2026-03-18") in the user's time zone, computed by the API.
+ * The helpers here do date arithmetic on those strings in UTC so the browser's own zone never shifts them.
+ */
+
 export function parseDate(iso: string): Date {
-  return new Date(`${iso}T00:00:00`);
+  const [y, m, d] = iso.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d));
 }
 
 export function toIso(date: Date): string {
@@ -11,13 +16,13 @@ export function toIso(date: Date): string {
 
 export function addDays(iso: string, days: number): string {
   const date = parseDate(iso);
-  date.setDate(date.getDate() + days);
+  date.setUTCDate(date.getUTCDate() + days);
   return toIso(date);
 }
 
 /** ISO weekday: 1 = Monday ... 7 = Sunday. */
 export function isoWeekday(iso: string): number {
-  const day = parseDate(iso).getDay();
+  const day = parseDate(iso).getUTCDay();
   return day === 0 ? 7 : day;
 }
 
@@ -27,9 +32,9 @@ export function startOfWeek(iso: string, weekStart: WeekStart): string {
   return addDays(iso, -offset);
 }
 
-const fullFormat = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric' });
-const shortFormat = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' });
-const monthFormat = new Intl.DateTimeFormat('en', { month: 'short' });
+const fullFormat = new Intl.DateTimeFormat('en', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'UTC' });
+const shortFormat = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric', timeZone: 'UTC' });
+const monthFormat = new Intl.DateTimeFormat('en', { month: 'short', timeZone: 'UTC' });
 
 export const formatLong = (iso: string) => fullFormat.format(parseDate(iso));
 export const formatShort = (iso: string) => shortFormat.format(parseDate(iso));
