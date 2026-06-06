@@ -34,6 +34,7 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
+import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.origin
 import io.ktor.server.plugins.ratelimit.RateLimit
 import io.ktor.server.request.path
@@ -73,6 +74,7 @@ fun Application.module(
     val todayService = TodayService(habitRepository, checkInRepository, clock)
 
     install(ContentNegotiation) { json(AppJson) }
+    install(DefaultHeaders) { header("X-Content-Type-Options", "nosniff") }
     install(CallLogging) {
         level = Level.INFO
         filter { it.request.path().startsWith("/api") }
