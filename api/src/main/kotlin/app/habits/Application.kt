@@ -36,6 +36,7 @@ import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.cors.routing.CORS
 import io.ktor.server.plugins.origin
 import io.ktor.server.plugins.ratelimit.RateLimit
+import io.ktor.server.request.path
 import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.runBlocking
@@ -74,6 +75,7 @@ fun Application.module(
     install(ContentNegotiation) { json(AppJson) }
     install(CallLogging) {
         level = Level.INFO
+        filter { it.request.path().startsWith("/api") }
     }
     install(CORS) {
         config.corsAllowedOrigins.forEach { origin ->
