@@ -46,7 +46,7 @@ object CompletionStats {
         today: LocalDate,
     ): Completion {
         val first = latest(from, startDate)
-        val last = to
+        val last = earliest(to, today)
         if (last.isBefore(first)) return Completion.NONE
         val includeToday = !today.isAfter(last) && today in completedDays
         val lastCounted = if (includeToday || last.isBefore(today)) last else last.minusDays(1)

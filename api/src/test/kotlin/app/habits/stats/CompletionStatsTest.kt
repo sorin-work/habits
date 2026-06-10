@@ -39,6 +39,21 @@ class CompletionStatsTest {
     }
 
     @Test
+    fun `days in the future and before the start are not expected`() {
+        val completion =
+            CompletionStats.completion(
+                Schedule.Daily,
+                march(14).first(),
+                march(14, 15),
+                march(9).first(),
+                march(22).first(),
+                today,
+            )
+        // 14th to 17th; the 18th is still open and the rest hasn't happened.
+        assertEquals(Completion(4, 2), completion)
+    }
+
+    @Test
     fun `weekday habits only expect their days`() {
         val schedule = Schedule.Weekdays(setOf(MONDAY, TUESDAY))
         val completion =

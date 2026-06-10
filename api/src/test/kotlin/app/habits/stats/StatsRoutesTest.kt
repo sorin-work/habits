@@ -72,8 +72,10 @@ class StatsRoutesTest {
             val buckets = weeks["buckets"] as JsonArray
             assertEquals(listOf("2026-03-02", "2026-03-09", "2026-03-16"), buckets.map { it.jsonObject["start"]!!.str })
             assertEquals(listOf(3, 1, 2), buckets.map { it.jsonObject["completed"]!!.int })
+            assertEquals(listOf(7, 7, 2), buckets.map { it.jsonObject["expected"]!!.int })
 
             val months = get("/api/habits/$id/stats?period=month&count=2", token).obj()["buckets"] as JsonArray
+            assertEquals(listOf(0, 17), months.map { it.jsonObject["expected"]!!.int })
 
             assertEquals(HttpStatusCode.BadRequest, get("/api/habits/$id/stats?period=year", token).status)
             assertEquals(HttpStatusCode.BadRequest, get("/api/habits/$id/stats?count=500", token).status)
@@ -91,6 +93,7 @@ class StatsRoutesTest {
 
             val body = get("/api/stats/overview?period=week&count=2", token).obj()
             val current = (body["buckets"] as JsonArray).last().jsonObject
+            assertEquals(4, current["expected"]!!.int)
             assertEquals(3, current["completed"]!!.int)
             val habits = body["habits"] as JsonArray
             assertEquals(listOf("Read", "Water"), habits.map { it.jsonObject["name"]!!.str })
