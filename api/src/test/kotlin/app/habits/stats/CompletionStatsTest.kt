@@ -108,4 +108,23 @@ class CompletionStatsTest {
         val sundays = CompletionStats.bucketRanges(StatsPeriod.WEEK, 1, today, SUNDAY)
         assertEquals(listOf(march(15).first() to march(21).first()), sundays)
     }
+
+    @Test
+    fun `month buckets cover whole calendar months`() {
+        val ranges = CompletionStats.bucketRanges(StatsPeriod.MONTH, 2, today, MONDAY)
+        assertEquals(
+            listOf(
+                LocalDate.of(2026, 2, 1) to LocalDate.of(2026, 2, 28),
+                LocalDate.of(2026, 3, 1) to LocalDate.of(2026, 3, 31),
+            ),
+            ranges,
+        )
+    }
+
+    @Test
+    fun `the current month only expects days up to today`() {
+        val buckets =
+            CompletionStats.buckets(Schedule.Daily, start, march(1, 2, 3), StatsPeriod.MONTH, 1, today, MONDAY)
+        assertEquals(Completion(17, 3), buckets.single().completion)
+    }
 }
