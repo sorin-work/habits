@@ -606,6 +606,10 @@ textarea:focus {
   color: var(--habit-color);
 }
 
+.streak-badge {
+  white-space: nowrap;
+}
+
 .note {
   margin: 0.4rem 0 0 1.5rem;
   font-size: 0.9rem;

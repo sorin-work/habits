@@ -7,8 +7,9 @@ import { EmptyState } from '../components/EmptyState';
 import { ErrorMessage } from '../components/ErrorMessage';
 import { NoteEditor } from '../components/NoteEditor';
 import { ProgressBar } from '../components/ProgressBar';
+import { StreakBadge } from '../components/StreakBadge';
 import { addDays, relativeDay } from '../lib/dates';
-import { describeSchedule, streakLabel } from '../lib/schedule';
+import { describeSchedule } from '../lib/schedule';
 
 type SaveInput = { habitId: number; date: string; value?: number; note?: string | null };
 
@@ -59,7 +60,12 @@ export function TodayPage() {
             </Link>
             <div className="muted small">
               {item.week ? `${item.week.done} of ${item.week.goal} this week` : describeSchedule(habit.schedule)}
-              {item.streak.current > 0 && ` · ${streakLabel(item.streak.current, item.streak.unit)} streak`}
+              {item.streak.current > 0 && (
+                <>
+                  {' · '}
+                  <StreakBadge streak={item.streak} />
+                </>
+              )}
             </div>
           </div>
           <CheckInControl
