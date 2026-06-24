@@ -33,8 +33,8 @@ export function CompletionChart({ buckets, period, color = 'var(--accent)' }: Co
         })}
       </div>
       <div className="chart-labels" aria-hidden="true">
-        {buckets.map((bucket) => (
-          <span key={bucket.start}>{label(bucket)}</span>
+        {buckets.map((bucket, i) => (
+          <span key={bucket.start}>{i % 2 === buckets.length % 2 ? '' : label(bucket)}</span>
         ))}
       </div>
     </figure>
