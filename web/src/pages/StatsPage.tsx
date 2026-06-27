@@ -72,7 +72,9 @@ export function StatsPage() {
             </tr>
           </thead>
           <tbody>
-            {data.habits.map((habit) => (
+            {[...data.habits]
+              .sort((a, b) => (b.last30Days.rate ?? -1) - (a.last30Days.rate ?? -1))
+              .map((habit) => (
                 <tr key={habit.id} style={{ ['--habit-color' as string]: habit.color }}>
                   <td>
                     <span className="habit-dot" aria-hidden="true" /> <Link to={`/habits/${habit.id}`}>{habit.name}</Link>
