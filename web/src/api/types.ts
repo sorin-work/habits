@@ -54,6 +54,8 @@ export interface HabitSummary {
   streak: Streak;
   last30Days: Completion;
   totalCheckIns: number;
+  totalCompleted: number;
+  totalValue: number;
   thisWeek: WeekProgress | null;
 }
 

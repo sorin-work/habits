@@ -123,8 +123,10 @@ export function HabitDetailPage() {
           </div>
         ) : (
           <div className="stat-card">
-            <span className="stat-label">Check-ins</span>
-            <span className="stat-value">{summary.totalCheckIns.toLocaleString()}</span>
+            <span className="stat-label">{habit.target ? `Total ${habit.unit ?? ''}`.trim() : 'Times done'}</span>
+            <span className="stat-value">
+              {habit.target ? summary.totalValue.toLocaleString() : summary.totalCompleted.toLocaleString()}
+            </span>
           </div>
         )}
       </div>
