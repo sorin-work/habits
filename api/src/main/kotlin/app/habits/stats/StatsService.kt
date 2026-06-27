@@ -137,6 +137,7 @@ class StatsService(
             streak = streaks.toResponse(),
             last30Days = last30(habit, completed, today).toResponse(),
             totalCheckIns = history.size,
+            totalValue = history.sumOf { it.value.toLong() },
             thisWeek = weekProgress(habit, completed, today, user.weekStart),
         )
     }

@@ -30,6 +30,7 @@ class StatsRoutesTest {
             assertEquals(3, streak["best"]!!.int)
             assertEquals("days", streak["unit"]!!.str)
             assertEquals(5, summary["totalCheckIns"]!!.int)
+            assertEquals(38, summary["totalValue"]!!.int)
             // Started on the 1st: 18 days expected, 4 completed.
             val last30 = summary["last30Days"] as JsonObject
             assertEquals(18, last30["expected"]!!.int)

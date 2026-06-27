@@ -25,6 +25,7 @@ data class HabitSummary(
     val streak: StreakResponse,
     val last30Days: CompletionResponse,
     val totalCheckIns: Int,
+    val totalValue: Long,
     val thisWeek: WeekProgress? = null,
 )
 
