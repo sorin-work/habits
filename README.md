@@ -106,6 +106,12 @@ Then open http://localhost:5183 and sign in with the demo account:
 - **Email:** `demo@example.com`
 - **Password:** `demo-password`
 
+On start the API runs the Flyway migrations and, because `SEED_DEMO=true`, creates the
+demo user (once) with about half a year of check-ins ending today: water and reading
+targets, a Mon/Wed/Fri run, meditation, a 3-times-a-week strength habit, a journal and
+an archived habit, with a two-week slump in the middle and a few notes. Set
+`SEED_DEMO=false` for an empty database.
+
 Quick check from the command line:
 
 ```bash
