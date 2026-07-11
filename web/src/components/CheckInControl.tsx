@@ -18,6 +18,7 @@ export function CheckInControl({ habit, value, completed, disabled, onSet, onCle
       <button
         type="button"
         className={`check-button${completed ? ' done' : ''}`}
+        aria-pressed={completed}
         aria-label={completed ? `Undo ${habit.name}` : `Mark ${habit.name} as done`}
         disabled={disabled}
         onClick={() => (completed ? onClear() : onSet(1))}
@@ -34,7 +35,7 @@ export function CheckInControl({ habit, value, completed, disabled, onSet, onCle
   };
 
   return (
-    <div className="counter">
+    <div className="counter" role="group" aria-label={`${habit.name} progress`}>
       <button
         type="button"
         className="counter-step"
@@ -44,7 +45,7 @@ export function CheckInControl({ habit, value, completed, disabled, onSet, onCle
       >
         −
       </button>
-      <span className={`counter-value${completed ? ' done' : ''}`}>
+      <span className={`counter-value${completed ? ' done' : ''}`} aria-live="polite">
         {value} / {habit.target}
         {habit.unit && <span className="muted"> {habit.unit}</span>}
       </span>

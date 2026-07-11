@@ -17,6 +17,7 @@ describe('CheckInControl', () => {
       <CheckInControl habit={{ name: 'Meditate', target: null, unit: null }} value={1} completed onSet={onSet} onClear={onClear} />,
     );
     const undo = screen.getByRole('button', { name: 'Undo Meditate' });
+    expect(undo).toHaveAttribute('aria-pressed', 'true');
     await userEvent.click(undo);
     expect(onClear).toHaveBeenCalled();
   });
