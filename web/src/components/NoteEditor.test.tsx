@@ -13,6 +13,15 @@ describe('NoteEditor', () => {
     expect(onSave).toHaveBeenCalledWith('Felt great');
   });
 
+  it('saves an emptied note as null', async () => {
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    render(<NoteEditor note="Old" onSave={onSave} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Edit note' }));
+    await userEvent.clear(screen.getByLabelText('Note'));
+    await userEvent.click(screen.getByRole('button', { name: 'Save note' }));
+    expect(onSave).toHaveBeenCalledWith(null);
+  });
+
   it('keeps the draft when the note changes underneath it', async () => {
     const { rerender } = render(<NoteEditor note="First" onSave={vi.fn()} />);
     await userEvent.click(screen.getByRole('button', { name: 'Edit note' }));
