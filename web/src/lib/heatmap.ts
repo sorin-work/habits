@@ -35,6 +35,11 @@ export function buildColumns(days: HeatmapDay[], weekStart: WeekStart): HeatmapC
       lastMonth = month;
     }
   }
+  // A label on the very first, partial column would crowd the next one.
+  if (columns.length > 1 && columns[1].label && columns[0].label) {
+    const daysInFirst = columns[0].days.filter(Boolean).length;
+    if (daysInFirst < 7) columns[0].label = null;
+  }
   return columns;
 }
 
