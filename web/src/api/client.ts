@@ -36,11 +36,16 @@ export async function request<T>(method: Method, path: string, body?: unknown): 
   if (token) headers.Authorization = `Bearer ${token}`;
   if (body !== undefined) headers['Content-Type'] = 'application/json';
 
-  const response = await fetch(path, {
-    method,
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  let response: Response;
+  try {
+    response = await fetch(path, {
+      method,
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiError(0, 'network_error', 'Could not reach the server. Check your connection.');
+  }
 
   if (response.status === 204) return undefined as T;
 

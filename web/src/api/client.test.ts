@@ -46,6 +46,12 @@ describe('api client', () => {
     expect(handler).not.toHaveBeenCalled();
   });
 
+  it('reports network failures', async () => {
+    globalThis.fetch = (() => Promise.reject(new TypeError('Failed to fetch'))) as typeof fetch;
+    const error = (await api.get('/api/me').catch((e: unknown) => e)) as ApiError;
+    expect(error.code).toBe('network_error');
+  });
+
   it('returns undefined for 204 responses', async () => {
     mockFetch({ 'DELETE /api/habits/1': undefined });
     await expect(api.delete('/api/habits/1')).resolves.toBeUndefined();
