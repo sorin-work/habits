@@ -3,6 +3,7 @@ package app.habits.seed
 import app.habits.auth.PasswordHasher
 import app.habits.checkins.CheckIn
 import app.habits.checkins.CheckInRepository
+import app.habits.common.today
 import app.habits.habits.HabitInput
 import app.habits.habits.HabitRepository
 import app.habits.habits.Schedule
@@ -44,7 +45,7 @@ class DemoSeeder(
         }
         val zone = ZoneId.of("Europe/Berlin")
         val now = clock.instant()
-        val today = LocalDate.now(clock)
+        val today = clock.today(zone)
         val user = users.create(DEMO_EMAIL, hasher.hash(DEMO_PASSWORD), "Alex Demo", zone, now)
         val random = Random(42)
         // A two week holiday where most habits slipped.
