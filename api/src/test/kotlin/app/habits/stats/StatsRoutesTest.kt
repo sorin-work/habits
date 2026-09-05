@@ -51,9 +51,14 @@ class StatsRoutesTest {
             assertEquals(7, days.size)
             assertEquals(listOf(0, 2, 4, 0, 0, 0, 0), days.map { it.jsonObject["level"]!!.int })
 
-            val year = get("/api/habits/$id/heatmap", token).obj()
+            // By default it goes back to the start date, but always shows a few months.
+            val recent = get("/api/habits/$id/heatmap", token).obj()
+            assertEquals("2025-11-19", recent["from"]!!.str)
+            assertEquals("2026-03-18", recent["to"]!!.str)
+
+            val old = createHabit(token, dailyHabit("Old", startDate = "2024-06-01"))
+            val year = get("/api/habits/$old/heatmap", token).obj()
             assertEquals("2025-03-19", year["from"]!!.str)
-            assertEquals("2026-03-18", year["to"]!!.str)
             assertEquals(365, year["days"]!!.jsonArray.size)
 
             assertEquals(

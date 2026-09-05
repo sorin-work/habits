@@ -11,6 +11,8 @@ import app.habits.common.longPath
 import app.habits.common.today
 import app.habits.stats.StatsPeriod
 import app.habits.stats.StatsService
+import app.habits.stats.earliest
+import app.habits.stats.latest
 import app.habits.users.UserService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -122,9 +124,12 @@ fun Route.habitRoutes(
                 }
                 get("/heatmap") {
                     val user = users.get(call.userId)
+                    val habit = service.get(user, call.longPath("id"))
                     val today = clock.today(user.timeZone)
-                    val range = call.dateRange(today.minusDays(364), today)
-                    call.respond(stats.heatmap(user, call.longPath("id"), range))
+                    // Up to a year back, but no further than the habit's start (while still showing a few months).
+                    val defaultFrom = latest(today.minusDays(364), earliest(habit.startDate, today.minusWeeks(17)))
+                    val range = call.dateRange(defaultFrom, today)
+                    call.respond(stats.heatmap(user, habit.id, range))
                 }
             }
         }
