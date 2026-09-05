@@ -138,7 +138,7 @@ export function HabitDetailPage() {
         ) : heatmap.isError ? (
           <ErrorMessage error={heatmap.error} />
         ) : (
-          <HabitHeatmap heatmap={heatmap.data} color={habit.color} weekStart={user.weekStart} />
+          <HabitHeatmap heatmap={heatmap.data} color={habit.color} unit={habit.unit} weekStart={user.weekStart} />
         )}
       </section>
 

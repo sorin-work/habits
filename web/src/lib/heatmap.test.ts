@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { HeatmapDay } from '../api/types';
 import { addDays } from './dates';
-import { buildColumns } from './heatmap';
+import { buildColumns, describeDay } from './heatmap';
 
 function range(from: string, count: number): HeatmapDay[] {
   return Array.from({ length: count }, (_, i) => ({
@@ -35,5 +35,19 @@ describe('buildColumns', () => {
     const columns = buildColumns(range('2026-03-15', 7), 'SUNDAY');
     expect(columns).toHaveLength(1);
     expect(columns[0].days[0]?.date).toBe('2026-03-15');
+  });
+});
+
+describe('describeDay', () => {
+  const day = { date: '2026-03-18', value: 5, level: 2, scheduled: true, completed: false };
+
+  it('shows progress for measured habits', () => {
+    expect(describeDay(day, 8, 'glasses')).toBe('2026-03-18: 5/8 glasses');
+  });
+
+  it('distinguishes missed days from days off', () => {
+    expect(describeDay({ ...day, value: 0 }, 1, null)).toBe('2026-03-18: not done');
+    expect(describeDay({ ...day, value: 0, scheduled: false }, 1, null)).toBe('2026-03-18: no check-in');
+    expect(describeDay({ ...day, value: 1 }, 1, null)).toBe('2026-03-18: done');
   });
 });

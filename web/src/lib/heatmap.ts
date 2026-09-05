@@ -46,3 +46,10 @@ export function buildColumns(days: HeatmapDay[], weekStart: WeekStart): HeatmapC
 function pad(days: (HeatmapDay | null)[]) {
   return [...days, ...Array<null>(7 - days.length).fill(null)];
 }
+
+export function describeDay(day: HeatmapDay, goal: number, unit: string | null): string {
+  const date = day.date;
+  if (day.value === 0) return `${date}: ${day.scheduled ? 'not done' : 'no check-in'}`;
+  if (goal <= 1) return `${date}: done`;
+  return `${date}: ${day.value}/${goal}${unit ? ` ${unit}` : ''}`;
+}

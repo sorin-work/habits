@@ -7,6 +7,7 @@ describe('HabitHeatmap', () => {
     render(
       <HabitHeatmap
         color="#3fa7d6"
+        unit="glasses"
         weekStart="MONDAY"
         heatmap={{
           from: '2026-03-16',
@@ -23,5 +24,6 @@ describe('HabitHeatmap', () => {
     const cells = screen.getAllByRole('gridcell');
     expect(cells).toHaveLength(3);
     expect(cells[0]).toHaveAttribute('data-level', '4');
+    expect(screen.getByLabelText('2026-03-17: 4/8 glasses')).toBeInTheDocument();
   });
 });

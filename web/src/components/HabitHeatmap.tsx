@@ -1,17 +1,18 @@
 import type { Heatmap, WeekStart } from '../api/types';
 import { orderedWeekdays } from '../lib/dates';
-import { buildColumns } from '../lib/heatmap';
+import { buildColumns, describeDay } from '../lib/heatmap';
 
 interface HabitHeatmapProps {
   heatmap: Heatmap;
   color: string;
+  unit: string | null;
   weekStart: WeekStart;
 }
 
 const OPACITY = [0, 0.3, 0.5, 0.75, 1];
 
 /** A year of check-ins, one square per day, one column per week. */
-export function HabitHeatmap({ heatmap, color, weekStart }: HabitHeatmapProps) {
+export function HabitHeatmap({ heatmap, color, unit, weekStart }: HabitHeatmapProps) {
   const columns = buildColumns(heatmap.days, weekStart);
   const weekdays = orderedWeekdays(weekStart);
   return (
@@ -37,7 +38,8 @@ export function HabitHeatmap({ heatmap, color, weekStart }: HabitHeatmapProps) {
                     className={`heatmap-cell${day.scheduled ? '' : ' off'}`}
                     data-level={day.level}
                     style={day.level > 0 ? { opacity: OPACITY[day.level] } : undefined}
-                    title={day.date}
+                    title={describeDay(day, heatmap.goal, unit)}
+                    aria-label={describeDay(day, heatmap.goal, unit)}
                   />
                 ) : (
                   <span key={`empty-${j}`} className="heatmap-cell empty" aria-hidden="true" />
