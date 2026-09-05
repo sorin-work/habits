@@ -730,6 +730,11 @@ textarea:focus {
   background: var(--habit-color);
 }
 
+.heatmap-cell.off[data-level='0'] {
+  background: transparent;
+  border: 1px solid var(--empty-cell);
+}
+
 .heatmap-cell.empty {
   background: transparent;
 }

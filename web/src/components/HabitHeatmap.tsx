@@ -34,7 +34,7 @@ export function HabitHeatmap({ heatmap, color, weekStart }: HabitHeatmapProps) {
                   <span
                     key={day.date}
                     role="gridcell"
-                    className="heatmap-cell"
+                    className={`heatmap-cell${day.scheduled ? '' : ' off'}`}
                     data-level={day.level}
                     style={day.level > 0 ? { opacity: OPACITY[day.level] } : undefined}
                     title={day.date}
