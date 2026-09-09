@@ -30,15 +30,15 @@ describe('HabitForm', () => {
     const onSubmit = setup();
     await userEvent.type(screen.getByLabelText('Name'), 'Run');
     await userEvent.click(screen.getByLabelText('Specific days'));
-    // Mon, Wed and Fri are preselected; drop Wednesday and add Saturday.
+    // Mon, Wed and Fri are preselected; drop Wednesday and add Tuesday.
     await userEvent.click(screen.getByRole('button', { name: 'Wed' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Sat' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Tue' }));
     await userEvent.click(screen.getByLabelText(/Track an amount/));
     await userEvent.type(screen.getByLabelText('Daily target'), '5');
     await userEvent.type(screen.getByLabelText('Unit (optional)'), 'km');
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
     expect(onSubmit).toHaveBeenCalledWith(
-      expect.objectContaining({ schedule: { type: 'weekdays', days: [1, 5, 6] }, target: 5, unit: 'km' }),
+      expect.objectContaining({ schedule: { type: 'weekdays', days: [1, 2, 5] }, target: 5, unit: 'km' }),
     );
   });
 

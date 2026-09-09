@@ -9,7 +9,7 @@ interface WeekdayPickerProps {
 
 export function WeekdayPicker({ value, onChange, weekStart }: WeekdayPickerProps) {
   const toggle = (day: number) => {
-    onChange(value.includes(day) ? value.filter((d) => d !== day) : [...value, day]);
+    onChange(value.includes(day) ? value.filter((d) => d !== day) : [...value, day].sort((a, b) => a - b));
   };
   return (
     <div className="weekday-picker" role="group" aria-label="Days">
