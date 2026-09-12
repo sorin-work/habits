@@ -11,4 +11,6 @@ WORKDIR /app
 COPY --from=build /app/build/install/habits-api ./
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -Duser.timezone=UTC"
 EXPOSE 8080
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=6 \
+  CMD wget -qO- http://127.0.0.1:8080/health || exit 1
 ENTRYPOINT ["/app/bin/habits-api"]
