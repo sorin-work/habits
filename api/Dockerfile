@@ -8,7 +8,9 @@ RUN gradle installDist --no-daemon -q -x test
 
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
+RUN addgroup -S app && adduser -S app -G app
 COPY --from=build /app/build/install/habits-api ./
+USER app
 ENV JAVA_OPTS="-XX:MaxRAMPercentage=75 -Duser.timezone=UTC"
 EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=6 \
