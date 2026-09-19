@@ -610,6 +610,11 @@ textarea:focus {
   white-space: nowrap;
 }
 
+.flame {
+  fill: #f2774b;
+  vertical-align: -1px;
+}
+
 .note {
   margin: 0.4rem 0 0 1.5rem;
   font-size: 0.9rem;
