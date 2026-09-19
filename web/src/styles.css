@@ -882,7 +882,15 @@ textarea:focus {
     min-width: 3.5rem;
   }
 
+  .today-item-main {
     flex-wrap: wrap;
   }
 
+  .today-item-text {
+    flex-basis: calc(100% - 4rem);
+  }
+
+  .today-item-main .counter {
+    margin-left: 1.5rem;
+  }
 }
