@@ -95,6 +95,12 @@ class CompletionStatsTest {
     }
 
     @Test
+    fun `rate is capped at one and null when nothing was expected`() {
+        assertEquals(1.0, Completion(2, 5).rate)
+        assertNull(Completion(0, 0).rate)
+    }
+
+    @Test
     fun `week buckets end with the current week`() {
         val ranges = CompletionStats.bucketRanges(StatsPeriod.WEEK, 3, today, MONDAY)
         assertEquals(

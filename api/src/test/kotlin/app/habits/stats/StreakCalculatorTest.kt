@@ -40,9 +40,19 @@ class StreakCalculatorTest {
     }
 
     @Test
+    fun `no check-ins means no streak`() {
+        assertEquals(Streaks(0, 0, StreakUnit.DAYS), daily(emptySet()))
+    }
+
+    @Test
     fun `days before the start date are ignored`() {
         val streaks = daily(daysAgo(1, 2, 3, 10, 11, 12, 13), startDate = today.minusDays(3))
         assertEquals(Streaks(3, 3, StreakUnit.DAYS), streaks)
+    }
+
+    @Test
+    fun `a habit that starts in the future has no streak`() {
+        assertEquals(Streaks(0, 0, StreakUnit.DAYS), daily(daysAgo(0, 1), startDate = today.plusDays(2)))
     }
 
     @Test
