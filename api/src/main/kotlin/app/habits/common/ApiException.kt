@@ -26,3 +26,8 @@ class ConflictException(
 class UnauthorizedException(
     message: String = "Authentication required",
 ) : ApiException(HttpStatusCode.Unauthorized, "unauthorized", message)
+
+fun badRequest(
+    code: String,
+    message: String,
+): Nothing = throw ApiException(HttpStatusCode.BadRequest, code, message)

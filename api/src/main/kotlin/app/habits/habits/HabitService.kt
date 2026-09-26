@@ -5,14 +5,13 @@ import app.habits.checkins.CheckInRepository
 import app.habits.checkins.CheckInRequest
 import app.habits.checkins.MAX_CHECK_IN_VALUE
 import app.habits.checkins.MAX_NOTE_LENGTH
-import app.habits.common.ApiException
 import app.habits.common.ConflictException
 import app.habits.common.DateRange
 import app.habits.common.NotFoundException
+import app.habits.common.badRequest
 import app.habits.common.today
 import app.habits.common.validate
 import app.habits.users.User
-import io.ktor.http.HttpStatusCode
 import java.time.Clock
 import java.time.LocalDate
 
@@ -140,14 +139,10 @@ class HabitService(
     ) {
         if (habit.archived) throw archived()
         if (date.isAfter(clock.today(user.timeZone))) {
-            throw ApiException(
-                HttpStatusCode.BadRequest,
-                "future_date",
-                "You can't check in for a day that hasn't happened yet",
-            )
+            badRequest("future_date", "You can't check in for a day that hasn't happened yet")
         }
         if (date.isBefore(habit.startDate)) {
-            throw ApiException(HttpStatusCode.BadRequest, "before_start", "This habit starts on ${habit.startDate}")
+            badRequest("before_start", "This habit starts on ${habit.startDate}")
         }
     }
 

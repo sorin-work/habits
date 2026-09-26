@@ -3,7 +3,7 @@ package app.habits.habits
 import app.habits.auth.AUTH_JWT
 import app.habits.auth.userId
 import app.habits.checkins.CheckInResponse
-import app.habits.common.ApiException
+import app.habits.common.badRequest
 import app.habits.common.datePath
 import app.habits.common.dateRange
 import app.habits.common.intQuery
@@ -147,5 +147,5 @@ private fun ApplicationCall.statsPeriod(): StatsPeriod =
     when (request.queryParameters["period"] ?: "week") {
         "week" -> StatsPeriod.WEEK
         "month" -> StatsPeriod.MONTH
-        else -> throw ApiException(HttpStatusCode.BadRequest, "invalid_parameter", "'period' must be week or month")
+        else -> badRequest("invalid_parameter", "'period' must be week or month")
     }

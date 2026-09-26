@@ -1,8 +1,8 @@
 package app.habits.today
 
 import app.habits.checkins.CheckInRepository
-import app.habits.common.ApiException
 import app.habits.common.LocalDateSerializer
+import app.habits.common.badRequest
 import app.habits.common.today
 import app.habits.habits.HabitRepository
 import app.habits.habits.HabitResponse
@@ -14,7 +14,6 @@ import app.habits.stats.StreakResponse
 import app.habits.stats.WeekProgress
 import app.habits.stats.toResponse
 import app.habits.users.User
-import io.ktor.http.HttpStatusCode
 import kotlinx.serialization.Serializable
 import java.time.Clock
 import java.time.LocalDate
@@ -54,9 +53,7 @@ class TodayService(
     ): TodayResponse {
         val today = clock.today(user.timeZone)
         val date = requested ?: today
-        if (date.isAfter(today)) {
-            throw ApiException(HttpStatusCode.BadRequest, "future_date", "That day hasn't happened yet")
-        }
+        if (date.isAfter(today)) badRequest("future_date", "That day hasn't happened yet")
 
         val active = habits.list(user.id, archived = false).filter { !it.startDate.isAfter(date) }
         val history = checkIns.forHabits(active.map { it.id }, date)
