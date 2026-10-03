@@ -5,7 +5,6 @@ import app.habits.auth.PasswordHasher
 import app.habits.auth.configureSecurity
 import app.habits.checkins.CheckInRepository
 import app.habits.common.AppJson
-import app.habits.common.ErrorResponse
 import app.habits.common.configureErrorHandling
 import app.habits.config.AppConfig
 import app.habits.db.DatabaseFactory
@@ -24,7 +23,6 @@ import app.habits.users.authRoutes
 import app.habits.users.userRoutes
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
-import io.ktor.http.HttpStatusCode
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationStopped
@@ -38,7 +36,6 @@ import io.ktor.server.plugins.defaultheaders.DefaultHeaders
 import io.ktor.server.plugins.origin
 import io.ktor.server.plugins.ratelimit.RateLimit
 import io.ktor.server.request.path
-import io.ktor.server.response.respond
 import io.ktor.server.routing.routing
 import kotlinx.coroutines.runBlocking
 import org.slf4j.event.Level

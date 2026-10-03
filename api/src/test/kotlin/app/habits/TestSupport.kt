@@ -23,7 +23,9 @@ import io.ktor.server.testing.ApplicationTestBuilder
 import io.ktor.server.testing.testApplication
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -168,11 +170,11 @@ val JsonElement.int get() = jsonPrimitive.content.toInt()
 @Suppress("UNCHECKED_CAST")
 private fun toJson(value: Any?): JsonElement =
     when (value) {
-        null -> kotlinx.serialization.json.JsonNull
+        null -> JsonNull
         is JsonElement -> value
-        is String -> kotlinx.serialization.json.JsonPrimitive(value)
-        is Number -> kotlinx.serialization.json.JsonPrimitive(value)
-        is Boolean -> kotlinx.serialization.json.JsonPrimitive(value)
+        is String -> JsonPrimitive(value)
+        is Number -> JsonPrimitive(value)
+        is Boolean -> JsonPrimitive(value)
         is Map<*, *> -> JsonObject((value as Map<String, Any?>).mapValues { toJson(it.value) })
         is List<*> -> JsonArray(value.map { toJson(it) })
         else -> error("Can't encode ${value::class}")
