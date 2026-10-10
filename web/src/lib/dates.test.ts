@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addDays, orderedWeekdays, relativeDay, startOfWeek } from './dates';
+import { addDays, isoWeekday, orderedWeekdays, relativeDay, startOfWeek } from './dates';
 
 describe('dates', () => {
   it('adds days across month and year boundaries', () => {
@@ -12,6 +12,11 @@ describe('dates', () => {
     // Europe switches to summer time on 29 March 2026.
     expect(addDays('2026-03-28', 1)).toBe('2026-03-29');
     expect(addDays('2026-03-29', 1)).toBe('2026-03-30');
+  });
+
+  it('numbers weekdays like ISO', () => {
+    expect(isoWeekday('2026-03-16')).toBe(1);
+    expect(isoWeekday('2026-03-22')).toBe(7);
   });
 
   it('finds the start of the week for either week start', () => {

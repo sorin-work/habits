@@ -36,6 +36,13 @@ describe('buildColumns', () => {
     expect(columns).toHaveLength(1);
     expect(columns[0].days[0]?.date).toBe('2026-03-15');
   });
+
+  it('labels the first column of each month', () => {
+    const columns = buildColumns(range('2026-02-02', 42), 'MONDAY');
+    const labels = columns.map((c) => c.label);
+    expect(labels[0]).toBe('Feb');
+    expect(labels.filter(Boolean)).toEqual(['Feb', 'Mar']);
+  });
 });
 
 describe('describeDay', () => {
