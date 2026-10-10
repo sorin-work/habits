@@ -794,6 +794,11 @@ textarea:focus {
   border-bottom: 1px solid var(--border);
 }
 
+.table a {
+  color: var(--text);
+  font-weight: 500;
+}
+
 .table th {
   font-size: 0.8rem;
   color: var(--muted);
