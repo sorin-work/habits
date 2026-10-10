@@ -171,7 +171,7 @@ class StatsService(
         ): WeekProgress? {
             val schedule = habit.schedule as? Schedule.TimesPerWeek ?: return null
             val start = today.startOfWeek(weekStart)
-            val done = completed.count { !it.isBefore(start) && !it.isAfter(today) }
+            val done = completed.count { !it.isBefore(latest(start, habit.startDate)) && !it.isAfter(today) }
             return WeekProgress(done, StreakCalculator.requiredInWeek(schedule.times, start, habit.startDate))
         }
     }

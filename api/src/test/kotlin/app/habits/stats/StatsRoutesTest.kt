@@ -111,6 +111,22 @@ class StatsRoutesTest {
         }
 
     @Test
+    fun `this week's progress ignores check-ins from before the start date`() =
+        apiTest {
+            val token = register()
+            val gym = mapOf("name" to "Gym", "schedule" to mapOf("type" to "weekly", "timesPerWeek" to 3))
+            val id = createHabit(token, gym + ("startDate" to "2026-03-01"))
+            put("/api/habits/$id/checkins/2026-03-16", mapOf<String, Any>(), token)
+            put("/api/habits/$id/checkins/2026-03-17", mapOf<String, Any>(), token)
+            // Moving the start date later keeps the earlier check-in, but it no longer counts.
+            put("/api/habits/$id", gym + ("startDate" to "2026-03-17"), token)
+
+            val thisWeek = get("/api/habits/$id", token).obj()["summary"]!!.jsonObject["thisWeek"]!!.jsonObject
+            assertEquals(1, thisWeek["done"]!!.int)
+            assertEquals(3, thisWeek["goal"]!!.int)
+        }
+
+    @Test
     fun `overview doesn't let one habit make up for another`() =
         apiTest {
             val token = register()
