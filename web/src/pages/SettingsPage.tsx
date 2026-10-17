@@ -77,6 +77,7 @@ function ProfileForm() {
           {errorText(save.error)}
         </div>
       )}
+      {save.isSuccess && <p className="success">Saved.</p>}
       <div className="form-actions">
         <button type="submit" className="button primary" disabled={save.isPending}>
           Save profile
@@ -129,6 +130,7 @@ function PasswordForm() {
           />
         )}
       </Field>
+      {save.isSuccess && <p className="success">Password changed.</p>}
       <div className="form-actions">
         <button type="submit" className="button" disabled={save.isPending || !current || !next}>
           Change password
