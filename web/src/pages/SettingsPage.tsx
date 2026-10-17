@@ -1,11 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent } from 'react';
+import { useMemo, useState, type FormEvent } from 'react';
 import { changePassword, deleteAccount, updateProfile } from '../api/auth';
 import { ApiError } from '../api/client';
 import type { WeekStart } from '../api/types';
 import { useAuth, useUser } from '../auth/AuthContext';
 import { errorText } from '../components/ErrorMessage';
 import { Field } from '../components/Field';
+
+function timeZones(current: string): string[] {
+  const zones = typeof Intl.supportedValuesOf === 'function' ? Intl.supportedValuesOf('timeZone') : [];
+  return zones.includes(current) ? zones : [current, ...zones];
+}
 
 export function SettingsPage() {
   return (
@@ -25,6 +30,7 @@ function ProfileForm() {
   const [name, setName] = useState(user.name);
   const [timeZone, setTimeZone] = useState(user.timeZone);
   const [weekStart, setWeekStart] = useState<WeekStart>(user.weekStart);
+  const zones = useMemo(() => timeZones(user.timeZone), [user.timeZone]);
   const save = useMutation({
     mutationFn: updateProfile,
     onSuccess: (updated) => {
@@ -48,7 +54,15 @@ function ProfileForm() {
       </Field>
       <Field label="Email">{(props) => <input {...props} value={user.email} disabled />}</Field>
       <Field label="Time zone" error={fields.timeZone} hint="Your days start and end at midnight in this time zone.">
-        {(props) => <input {...props} value={timeZone} onChange={(e) => setTimeZone(e.target.value)} />}
+        {(props) => (
+          <select {...props} value={timeZone} onChange={(e) => setTimeZone(e.target.value)}>
+            {zones.map((zone) => (
+              <option key={zone} value={zone}>
+                {zone.replaceAll('_', ' ')}
+              </option>
+            ))}
+          </select>
+        )}
       </Field>
       <Field label="Weeks start on" error={fields.weekStart}>
         {(props) => (
