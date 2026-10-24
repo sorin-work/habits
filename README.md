@@ -150,6 +150,22 @@ npm run dev
 
 Vite proxies `/api` to `http://localhost:8080`; set `API_URL` to point it elsewhere.
 
+### Configuration
+
+| Variable               | Default                                    | Used by        |
+| ---------------------- | ------------------------------------------ | -------------- |
+| `DATABASE_URL`         | `jdbc:postgresql://localhost:5443/habits`  | api            |
+| `DATABASE_USER`        | `habits`                                   | api            |
+| `DATABASE_PASSWORD`    | `habits`                                   | api            |
+| `DATABASE_POOL_SIZE`   | `10`                                       | api            |
+| `JWT_SECRET`           | a development value (min. 32 characters)   | api            |
+| `JWT_TTL`              | `7d` (also accepts `12h`, `30m`, `90s`)    | api            |
+| `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` (comma separated)  | api            |
+| `LOGIN_RATE_LIMIT`     | `10` attempts per minute per IP            | api            |
+| `SEED_DEMO`            | `false` (`true` in docker compose)         | api            |
+| `PORT`                 | `8080`                                     | api            |
+| `API_URL`              | `http://localhost:8080`                    | web dev server |
+
 ## Tests and lint
 
 ```bash
@@ -209,3 +225,12 @@ web/
     pages/         one component per route
 docker-compose.yml
 ```
+
+## Assumptions and limits
+
+- One check-in per habit per day. Values are whole numbers; there's no unit conversion.
+- Changing a habit's schedule or target re-evaluates its whole history with the new
+  rules; there is no schedule history.
+- Moving the start date later hides earlier check-ins from streaks and stats but keeps
+  them.
+- There are no reminders or notifications, and no sharing between accounts.
