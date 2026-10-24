@@ -112,6 +112,16 @@ targets, a Mon/Wed/Fri run, meditation, a 3-times-a-week strength habit, a journ
 an archived habit, with a two-week slump in the middle and a few notes. Set
 `SEED_DEMO=false` for an empty database.
 
+| Service | Host port | URL                                                 | Notes                            |
+| ------- | --------- | --------------------------------------------------- | -------------------------------- |
+| web     | 5183      | http://localhost:5183                               | nginx; proxies `/api` to the API |
+| api     | 4403      | http://localhost:4403/health                        | Ktor                             |
+| db      | 5443      | `postgresql://habits:habits@localhost:5443/habits`  | Postgres 17                      |
+
+Ports can be changed with `WEB_PORT`, `API_PORT` and `DB_PORT` (in `.env` or inline,
+e.g. `WEB_PORT=8081 docker compose up`). Data lives in the `db-data` volume;
+`docker compose down -v` removes it.
+
 Quick check from the command line:
 
 ```bash
