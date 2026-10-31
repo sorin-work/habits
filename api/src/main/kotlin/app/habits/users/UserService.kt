@@ -136,7 +136,8 @@ private fun Validator.checkPassword(
     check(field, password.length >= MIN_PASSWORD_LENGTH) {
         "Password must be at least $MIN_PASSWORD_LENGTH characters"
     }
-    check(field, password.length <= MAX_PASSWORD_LENGTH) {
-        "Password must be at most $MAX_PASSWORD_LENGTH characters"
+    // bcrypt ignores everything after 72 bytes.
+    check(field, password.toByteArray().size <= MAX_PASSWORD_LENGTH) {
+        "Password must be at most $MAX_PASSWORD_LENGTH bytes"
     }
 }

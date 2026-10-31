@@ -131,4 +131,14 @@ class AuthRoutesTest {
             val invalid = put("/api/me", mapOf("name" to "Sam", "timeZone" to "UTC", "weekStart" to "FRIDAY"), token)
             assertEquals(HttpStatusCode.BadRequest, invalid.status)
         }
+
+    @Test
+    fun `passwords are limited to 72 bytes`() =
+        apiTest {
+            // 40 characters, but 80 bytes in UTF-8.
+            val body = mapOf("email" to "sam@example.com", "password" to "é".repeat(40), "name" to "Sam")
+            val response = post("/api/auth/register", body)
+            assertEquals(HttpStatusCode.BadRequest, response.status)
+            assertEquals(setOf("password"), response.obj()["fields"]!!.jsonObject.keys)
+        }
 }
