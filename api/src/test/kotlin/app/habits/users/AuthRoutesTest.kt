@@ -133,6 +133,46 @@ class AuthRoutesTest {
         }
 
     @Test
+    fun `change password`() =
+        apiTest {
+            val token = register()
+            val wrong =
+                put("/api/me/password", mapOf("currentPassword" to "nope", "newPassword" to "new-password-1"), token)
+            assertEquals(HttpStatusCode.BadRequest, wrong.status)
+            val ok =
+                put(
+                    "/api/me/password",
+                    mapOf(
+                        "currentPassword" to "correct-horse",
+                        "newPassword" to "new-password-1",
+                    ),
+                    token,
+                )
+            assertEquals(HttpStatusCode.NoContent, ok.status)
+            assertEquals(
+                HttpStatusCode.OK,
+                post("/api/auth/login", mapOf("email" to "sam@example.com", "password" to "new-password-1")).status,
+            )
+        }
+
+    @Test
+    fun `delete account removes the user and their habits`() =
+        apiTest {
+            val token = register()
+            createHabit(token)
+            assertEquals(HttpStatusCode.BadRequest, delete("/api/me", mapOf("password" to "nope"), token).status)
+            assertEquals(
+                HttpStatusCode.NoContent,
+                delete("/api/me", mapOf("password" to "correct-horse"), token).status,
+            )
+            assertEquals(HttpStatusCode.Unauthorized, get("/api/me", token).status)
+            assertEquals(
+                HttpStatusCode.Unauthorized,
+                post("/api/auth/login", mapOf("email" to "sam@example.com", "password" to "correct-horse")).status,
+            )
+        }
+
+    @Test
     fun `passwords are limited to 72 bytes`() =
         apiTest {
             // 40 characters, but 80 bytes in UTF-8.
