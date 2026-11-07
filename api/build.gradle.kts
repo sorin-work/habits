@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "app.habits"
-version = "0.1.0"
+version = "1.0.0"
 
 val ktorVersion = "3.3.3"
 val exposedVersion = "0.61.0"
