@@ -244,3 +244,6 @@ docker-compose.yml
 - Moving the start date later hides earlier check-ins from streaks and stats but keeps
   them.
 - There are no reminders or notifications, and no sharing between accounts.
+
+Ideas for lifting some of these, and for what could come next, are in
+[ROADMAP.md](ROADMAP.md).
