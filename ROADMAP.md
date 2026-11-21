@@ -462,3 +462,82 @@ matched to a log line, and nothing shows request rates, latencies or how often l
 - Micrometer with the Prometheus registry on `/metrics`, off by default and not forwarded by
   nginx.
 - Tests: a route test that an error carries the request id; one that `/metrics` is off by default.
+
+## Maybe
+
+### 26. Import from other habit apps
+
+People rarely start from zero; they come from Loop Habit Tracker, Habitica or a spreadsheet. With
+item 6's import in place, readers for other formats are small.
+
+- Loop's CSV export (habits and their check-ins) first, since it is open source and its format is
+  documented in its code; a generic "date, habit, value" CSV second.
+- Tricky: other apps' schedules do not map one to one. Import them as the nearest schedule and list
+  what was approximated.
+- Tests: reader unit tests on sample files.
+
+### 27. An accountability partner
+
+"No sharing between accounts" is in the limits. Some people keep habits better when one friend
+can see whether they did.
+
+- Invite another user by email to follow chosen habits: they see the today status, streaks and
+  heatmap of those habits, never the notes. Either side can end it.
+- Every query is scoped to the signed-in user today, and that is a good property. Sharing adds a
+  second path that must be checked everywhere it is used, which is why this is a Maybe.
+- Tests: route tests that a follower sees only shared habits, never notes, and nothing after the
+  share ends.
+
+### 28. Sharing a habit's progress by link
+
+A smaller version of item 27: a public, read-only link to one habit's heatmap and streak, for a
+blog or a friend.
+
+- A random token per shared habit, a page that renders the heatmap without signing in, and
+  "stop sharing" that invalidates the token.
+- Tests: route tests for a shared and an unshared habit and a revoked token.
+
+### 29. Translations
+
+Every label and message is in English, and dates use the browser's locale in some places only.
+
+- `react-i18next` for the web app. The API already sends stable error codes (`error` next to
+  `message`), so the web app can translate by code; validation messages per field need codes too.
+- Tests: a check that every key exists in each language.
+
+### 30. Faster stats with years of history
+
+The habit detail and stats endpoints load every check-in of a habit (`checkIns.all` in
+`StatsService.kt`), and the overview loads the check-ins of all active habits. With a few years of
+daily habits that is tens of thousands of rows per page load, all to compute numbers that change
+once a day.
+
+- Measure first with a route test that seeds five years for 20 habits.
+- Then: limit the history to what each number needs (best streak is the only one that needs
+  everything), and store the best streak per habit, updated when a check-in changes.
+- Tricky: with item 3 a rule change also changes the best streak; the stored value has to be
+  recomputed then.
+- Tests: the timing test, kept out of the default run if slow.
+
+### 31. A year in review
+
+At the end of the year: days completed per habit, longest streaks, best month and weekday, how
+the year compares with the last. The numbers come from `CompletionStats` and `StreakCalculator`;
+the work is a page that is worth looking at.
+
+- Tests: unit tests for the yearly summary as a pure function.
+
+### 32. Streak freezes
+
+Some apps let you earn a "freeze" that saves a streak once. With skips (item 4) a user can already
+save a streak on purpose; freezes add a game on top. Only if people ask for it after item 4.
+
+### 33. Starter habits
+
+A new account starts empty. A short list of common habits with sensible schedules and targets
+(drink water, read, walk, stretch, no phone after 22:00 with item 10) on the empty today view
+makes the first minute easier.
+
+- A static list in the web app; picking one fills the habit form, nothing is created without a
+  save.
+- Tests: a page test for picking one.
